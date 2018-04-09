@@ -1,12 +1,12 @@
-Freelance
+# Freelance
 
-Установка MySQL сервера
+## Установка MySQL сервера
 
-Установка PostgreSQL сервера
+## Установка PostgreSQL сервера
 
-Установка GRPC
+## Установка GRPC
 
-Настройка migrations of DB
+## Настройка migrations of DB
 - для начала тянем библиотеку: go get github.com/mattes/migrate
 - создадим две папки внутри migrations
 

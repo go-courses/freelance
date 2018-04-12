@@ -5,7 +5,7 @@ CREATE TABLE `billings` (
   `amount` int(11) NOT NULL,
   `time_bill` timestamp NOT NULL,
   `task_id` int(11) NOT NULL,
-  `type` enum('pay','hold') NOT NULL
+  `btype` enum('pay','hold') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `billings`

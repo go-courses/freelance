@@ -2,10 +2,10 @@
 
 ## Установка MySQL сервера
 После установки создаем базу freelance и пользователя:
-$mysql -u root -p
-mysql> CREATE DATABASE freelance;
-mysql> GRANT ALL PRIVILEGES ON freelance.* TO dbuser_f@localhost IDENTIFIED BY 'dbpass_f';
-mysql> exit;
+- $mysql -u root -p
+- mysql> CREATE DATABASE freelance;
+- mysql> GRANT ALL PRIVILEGES ON freelance.* TO dbuser_f@localhost IDENTIFIED BY 'dbpass_f';
+- mysql> exit;
 
 ## Установка PostgreSQL сервера
 Искать в Google
@@ -13,6 +13,7 @@ mysql> exit;
 ## Установка GRPC
 
 ## Настройка migrations of DB
+Миграции БД - это типа контроль версии схемы базы данных. Т.е. файлы или команды, описание создания БД, изменения структуры (добавление/удаление/изменение колонок, индексов ...), потом можно поделится этими изменениями. Получив эти файлы(команды) модно воспроизвести у себя в БД и получишь последние изменения(обновления) БД. 
 - для начала тянем библиотеку: go get github.com/mattes/migrate
 - создадим две папки внутри migrations, для двух типов БД: mysql и postresql
 - сейчас миграция работает для MySQL, запускается в main.go. Потом изменим.

@@ -56,14 +56,15 @@ func (m *PgSQL) CreateUser(s model.User) (model.User, error) {
 // SelectUser selects user entry from database
 func (m *PgSQL) SelectUser(id int64) (model.User, error) {
 	var s model.User
-	err := m.conn.Get(&s, "SELECT * FROM user WHERE id=?", id)
+	sqlStatement := `SELECT * FROM users WHERE id=$1;`
+	err := m.conn.Get(&s, sqlStatement, id)
 	return s, err
 }
 
 // ListUsers returns array of users entries from database
 func (m *PgSQL) ListUsers() ([]model.User, error) {
 	users := []model.User{}
-	err := m.conn.Select(&users, "SELECT * FROM users")
+	err := m.conn.Select(&users, `SELECT * FROM users`)
 	return users, err
 }
 
@@ -78,7 +79,7 @@ func (m *PgSQL) UpdateUser(s model.User) (model.User, error) {
 		return s, err
 	}
 	var i model.User
-	err = m.conn.Get(&i, "SELECT * FROM users WHERE id=?", s.ID)
+	err = m.conn.Get(&i, `SELECT * FROM users WHERE id=$1`, s.ID)
 	return i, err
 }
 
@@ -110,14 +111,15 @@ func (m *PgSQL) CreateTask(s model.Task) (model.Task, error) {
 // SelectTask selects task entry from database
 func (m *PgSQL) SelectTask(id int64) (model.Task, error) {
 	var s model.Task
-	err := m.conn.Get(&s, "SELECT * FROM tasks WHERE id=?", id)
+	sqlStatement := `SELECT * FROM tasks WHERE id=$1;`
+	err := m.conn.Get(&s, sqlStatement, id)
 	return s, err
 }
 
 // ListTasks returns array of tasks entries from database
 func (m *PgSQL) ListTasks() ([]model.Task, error) {
 	tasks := []model.Task{}
-	err := m.conn.Select(&tasks, "SELECT * FROM tasks")
+	err := m.conn.Select(&tasks, `SELECT * FROM tasks`)
 	return tasks, err
 }
 
@@ -132,7 +134,7 @@ func (m *PgSQL) UpdateTask(s model.Task) (model.Task, error) {
 		return s, err
 	}
 	var i model.Task
-	err = m.conn.Get(&i, "SELECT * FROM tasks WHERE id=?", s.ID)
+	err = m.conn.Get(&i, `SELECT * FROM tasks WHERE id=$1`, s.ID)
 	return i, err
 }
 
@@ -165,14 +167,16 @@ func (m *PgSQL) CreateBilling(s model.Billing) (model.Billing, error) {
 // SelectBilling selects billing entry from database
 func (m *PgSQL) SelectBilling(id int64) (model.Billing, error) {
 	var s model.Billing
-	err := m.conn.Get(&s, "SELECT * FROM billings WHERE id=?", id)
+	sqlStatement := `SELECT * FROM billings WHERE id=$1;`
+	err := m.conn.Get(&s, sqlStatement, id)
 	return s, err
+
 }
 
 // ListBillings returns array of Billing entries from database
 func (m *PgSQL) ListBillings() ([]model.Billing, error) {
 	billings := []model.Billing{}
-	err := m.conn.Select(&billings, "SELECT * FROM billings")
+	err := m.conn.Select(&billings, `SELECT * FROM billings`)
 	return billings, err
 }
 
@@ -187,7 +191,7 @@ func (m *PgSQL) UpdateBilling(s model.Billing) (model.Billing, error) {
 		return s, err
 	}
 	var i model.Billing
-	err = m.conn.Get(&i, "SELECT * FROM tasks WHERE id=?", s.ID)
+	err = m.conn.Get(&i, `SELECT * FROM billings WHERE id=$1`, s.ID)
 	return i, err
 }
 

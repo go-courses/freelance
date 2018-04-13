@@ -1,13 +1,10 @@
 package db
 
 import (
-	"time"
-
+	"github.com/go-courses/freelance/config"
 	"github.com/go-courses/freelance/model"
-	"github.com/lib/pq"
-	"github.com/mattes/migrate/source/file"
-
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 // PgSQL provides api for work with PgSQL database
@@ -15,13 +12,9 @@ type PgSQL struct {
 	conn *sqlx.DB
 }
 
-type Config struct {
-	ConnectString string
-}
-
 // NewPgSQL creates a new instance of database API
-func NewPgSQL(cfg Config) (*PgSQL, error) {
-	if conn, err := sqlx.Connect("postgres", cfg.ConnectString); err != nil {
+func NewPgSQL(c *config.FreelanceConfig) (*PgSQL, error) {
+	if conn, err := sqlx.Connect("postgres", c.DatabaseURL); err != nil {
 		return nil, err
 	} else {
 		p := &PgSQL{conn: conn}
@@ -35,8 +28,7 @@ func NewPgSQL(cfg Config) (*PgSQL, error) {
 // CreateUser creates user entry in database
 func (m *PgSQL) CreateUser(s model.User) (model.User, error) {
 	res, err := m.conn.Exec(
-		"INSERT INTO `users` (name, utype, balance) VALUES (?, ?, ?)",
-		s.Name, s.UserType, s.Balance
+		"INSERT INTO `users` (name, utype, balance) VALUES (?, ?, ?)", s.Name, s.UserType, s.Balance,
 	)
 	if err != nil {
 		return s, err
@@ -83,12 +75,11 @@ func (m *PgSQL) DeleteUser(id int64) error {
 	return err
 }
 
-
 // CreateTask creates task entry in database
 func (m *PgSQL) CreateTask(s model.Task) (model.Task, error) {
 	res, err := m.conn.Exec(
 		"INSERT INTO `tasks` (description, price, status) VALUES (?, ?, ?)",
-		s.Description, s.Price, s.Status
+		s.Description, s.Price, s.Status,
 	)
 	if err != nil {
 		return s, err
@@ -135,13 +126,11 @@ func (m *PgSQL) DeleteTask(id int64) error {
 	return err
 }
 
-
-
 // CreateBilling creates billing entry in database
 func (m *PgSQL) CreateBilling(s model.Billing) (model.Billing, error) {
 	res, err := m.conn.Exec(
 		"INSERT INTO `billings` (sender, reciever, amount, time_bill, task_id, btype) VALUES (?, ?, ?, ?, ?,?)",
-		s.Sender, s.Reciever, s.amount, s.time.Now().UTC(), s.TaskID, s.BillingType
+		s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType,
 	)
 	if err != nil {
 		return s, err
@@ -172,7 +161,7 @@ func (m *PgSQL) ListBillings() ([]model.Billing, error) {
 func (m *PgSQL) UpdateBilling(s model.Billing) (model.Billing, error) {
 	_, err := m.conn.Exec(
 		"UPDATE `billings` SET sender=?, reciever=?, amount=?, time_bill=?, task_id=?, btype=? WHERE id=?",
-		s.Sender, s.Reciever, s.amount, s.TimeBill, s.TaskID, s.BillingType, s.ID,
+		s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID,
 	)
 	if err != nil {
 		return s, err

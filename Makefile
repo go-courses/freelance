@@ -1,8 +1,6 @@
 SHELL := /bin/bash
-SERVER_OUT := "cmd/freelance/server"
 API_OUT := "api/api.pb.go"
 API_REST_OUT := "api/api.pb.gw.go"
-SERVER_PKG_BUILD := "server/server.go""
 GOPATH=$(shell go env GOPATH)
 
 .PHONY: all api server
@@ -24,7 +22,7 @@ api/api.pb.gw.go:
 api: api/api.pb.go api/api.pb.gw.go
 
 clean:
-	rm $(SERVER_OUT) $(API_OUT) $(API_REST_OUT)
+	rm $(API_OUT) $(API_REST_OUT)
 
 mysqlenv:
 	export DATABASE_URL="dbuser_f:dbpass_f@tcp(localhost:3306)/freelance?multiStatements=true"

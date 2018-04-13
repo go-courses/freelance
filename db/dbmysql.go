@@ -51,7 +51,7 @@ func NewMySQL(c *config.FreelanceConfig) (*MySQL, error) {
 // CreateUser creates user entry in database
 func (m *MySQL) CreateUser(s model.User) (model.User, error) {
 	res, err := m.conn.Exec(
-		"INSERT INTO `users` (name, utype, balance) VALUES (?, ?, ?)", s.Name, s.UserType, s.Balance,
+		"INSERT INTO `users` (`name`, `utype`, `balance`) VALUES (?, ?, ?)", s.Name, s.UserType, s.Balance,
 	)
 	if err != nil {
 		return s, err
@@ -67,7 +67,7 @@ func (m *MySQL) CreateUser(s model.User) (model.User, error) {
 // SelectUser selects user entry from database
 func (m *MySQL) SelectUser(id int64) (model.User, error) {
 	var s model.User
-	err := m.conn.Get(&s, "SELECT * FROM `user` WHERE id=?", id)
+	err := m.conn.Get(&s, "SELECT * FROM `users` WHERE id=?", id)
 	return s, err
 }
 

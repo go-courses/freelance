@@ -1,12 +1,15 @@
 package db
 
 import (
-	"fmt"
+	"database/sql"
 
 	"github.com/go-courses/freelance/config"
 	"github.com/go-courses/freelance/model"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/mattes/migrate"
+	"github.com/mattes/migrate/database/postgres"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -19,24 +22,23 @@ const (
 
 // PgSQL provides api for work with PgSQL database
 type PgSQL struct {
-	conn *sqlx.DB
+	conn        *sqlx.DB
+	connmigrate *sql.DB
 }
 
 // NewPgSQL creates a new instance of database API
 func NewPgSQL(c *config.FreelanceConfig) (*PgSQL, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	if conn, err := sqlx.Connect("postgres", psqlInfo); err != nil {
+	connmigrate, err := sql.Open("postgres", c.DatabaseURL)
+	if err != nil {
 		return nil, err
-	} else {
-		p := &PgSQL{conn: conn}
-		if err := p.conn.Ping(); err != nil {
-			return nil, err
-		}
-		return p, nil
 	}
+
+	conn := sqlx.NewDb(connmigrate, "postgres")
+
+	m := &PgSQL{}
+	m.conn = conn
+	m.connmigrate = connmigrate
+	return m, nil
 }
 
 // CreateUser creates user entry in database
@@ -204,4 +206,44 @@ func (m *PgSQL) DeleteBilling(id int64) error {
 		panic(err)
 	}
 	return err
+}
+
+// MigrateUp - create tables
+func (m *PgSQL) MigrateUp() error {
+	driver, _ := postgres.WithInstance(m.connmigrate, &postgres.Config{})
+	migration, err := migrate.NewWithDatabaseInstance(
+		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/pgsql",
+		"postgres",
+		driver,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "migration file not found")
+	}
+
+	err = migration.Up()
+	if err != nil {
+		return errors.Wrap(err, "migration Up error")
+	}
+	return nil
+}
+
+// MigrateDown - delete tables
+func (m *PgSQL) MigrateDown() error {
+	driver, _ := postgres.WithInstance(m.connmigrate, &postgres.Config{})
+	migration, err := migrate.NewWithDatabaseInstance(
+		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/pgsql",
+		"postgres",
+		driver,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "migration file not found")
+	}
+
+	err = migration.Down()
+	if err != nil {
+		return errors.Wrap(err, "migration Down error")
+	}
+	return nil
 }

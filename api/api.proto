@@ -1,0 +1,38 @@
+syntax = "proto3";
+package api;
+
+import "google/api/annotations.proto";
+
+message User {
+    int32 id = 1;
+    string name = 2;
+    string utype = 3;
+    int32 balance = 4;
+}
+
+message UserId {
+    int32 id = 1;
+}
+service DoUsers {
+    rpc CreateUser(User) returns (UserId) {
+        option (google.api.http) = {
+            post: "/api/user"
+            body: "*"
+        };
+    }
+    rpc SelectUser(UserId) returns (User) {
+        option (google.api.http) = {
+            get: "/api/user/{id}"
+        };
+    }
+    rpc ListUsers(User) returns (User) {
+        option (google.api.http) = {
+            get: "/api/users"
+        };
+    }
+    rpc UpdateUser(User) returns (User) {
+        option (google.api.http) = {
+            post: "/api/user/{id}"
+        };
+    }
+}

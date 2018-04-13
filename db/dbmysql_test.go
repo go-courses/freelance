@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"os"
 	"testing"
 
 	"github.com/go-courses/freelance/config"
@@ -10,6 +11,8 @@ import (
 )
 
 func TestUsers(t *testing.T) {
+	lastenv := os.Getenv("DATABASE_URL")
+	os.Setenv("DATABASE_URL", "dbuser_f:dbpass_f@tcp(localhost:3306)/freelance?multiStatements=true")
 	c, err := config.GetConfig()
 	assert.NoError(t, err)
 	m, err := NewMySQL(c)
@@ -36,4 +39,6 @@ func TestUsers(t *testing.T) {
 	s, err = m.SelectUser(s.ID)
 	assert.Equal(t, err, sql.ErrNoRows)
 	assert.Equal(t, s.ID, int64(0))
+
+	os.Setenv("DATABASE_URL", lastenv)
 }

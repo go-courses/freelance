@@ -14,7 +14,9 @@ func main() {
 		log.Fatal(err, "could not get env conf parms")
 	}
 
-	conn, err := db.NewMySQL(c)
+	// подключение для PostgreSQL or MySQL
+	//conn, err := db.NewMySQL(c)
+	conn, err := db.NewPgSQL(c)
 	if err != nil {
 		fmt.Println(err, " could not create database connection")
 	}

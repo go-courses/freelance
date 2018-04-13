@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"os"
 	"testing"
 
 	"github.com/go-courses/freelance/config"
@@ -10,13 +11,16 @@ import (
 )
 
 func TestCRUDLUser(t *testing.T) {
+	lastenv := os.Getenv("DATABASE_URL")
+	os.Setenv("DATABASE_URL", "postgres://dbuser_f:dbpass_f@localhost:5432/freelance?query")
 	c, err := config.GetConfig()
 	assert.NoError(t, err)
 	m, err := NewPgSQL(c)
 	assert.NoError(t, err)
 	s, err := m.CreateUser(model.User{
 		Name:     "John Doe",
-		UserType: "user",
+		UserType: "client",
+		Balance:  0,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, s.Balance, 0)
@@ -36,4 +40,5 @@ func TestCRUDLUser(t *testing.T) {
 	assert.Equal(t, err, sql.ErrNoRows)
 	assert.Equal(t, s.ID, int64(0))
 
+	os.Setenv("DATABASE_URL", lastenv)
 }

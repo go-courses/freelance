@@ -19,6 +19,11 @@ func main() {
 		fmt.Println(err, " could not create database connection")
 	}
 
+	conn, err := db.NewPgSQL(c)
+	if err != nil {
+		fmt.Println(err, " could not create database connection")
+	}
+
 	err = conn.MigrateUp()
 	if err != nil {
 		//spew.Dump(err)

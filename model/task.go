@@ -1,8 +1,8 @@
 package model
 
 type Task struct {
-	Id          int64
-	Description string
-	Price       int64
-	Status      string
+	ID          int64  `db:"id"`
+	Description string `db:"description"`
+	Price       int64  `db:"price"`
+	Status      string `db:"status"`
 }

@@ -1,8 +1,8 @@
 package model
 
 type User struct {
-	Id      int64
-	Name    string
-	Type    string
-	balanse int64
+	ID      int64  `db:"id"`
+	Name    string `db:"name"`
+	Type    string `db:"utype"`
+	Balanse int64  `db:"balance"`
 }

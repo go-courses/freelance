@@ -1,11 +1,11 @@
 package model
 
 type Billing struct {
-	Id           int64
-	Sender       string
-	Reciever     string
-	Amount       int64
-	Time_bill    string
-	Task_id      int64
-	Billing_type string
+	ID          int64  `db:"id"`
+	Sender      string `db:"sender"`
+	Reciever    string `db:"reciever"`
+	Amount      int64  `db:"amount"`
+	TimeBill    string `db:"time_bill"`
+	TaskID      int64  `db:"task_id"`
+	BillingType string `db:"btype"`
 }

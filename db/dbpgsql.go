@@ -41,17 +41,15 @@ func NewPgSQL(c *config.FreelanceConfig) (*PgSQL, error) {
 
 // CreateUser creates user entry in database
 func (m *PgSQL) CreateUser(s model.User) (model.User, error) {
-	res, err := m.conn.Exec(
-		"INSERT INTO users (name, utype, balance) VALUES (?, ?, ?);", s.Name, s.UserType, s.Balance,
-	)
+	sqlStatement := `INSERT INTO users (name, utype, balance)
+	VALUES ($1, $2, $3)
+	RETURNING id`
+	id := 0
+	err := m.conn.QueryRow(sqlStatement, s.Name, s.UserType, s.Balance).Scan(&id)
 	if err != nil {
-		return s, err
+		panic(err)
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return s, err
-	}
-	s.ID = id
+	s.ID = int64(id)
 	return s, nil
 }
 
@@ -97,18 +95,15 @@ func (m *PgSQL) DeleteUser(id int64) error {
 
 // CreateTask creates task entry in database
 func (m *PgSQL) CreateTask(s model.Task) (model.Task, error) {
-	res, err := m.conn.Exec(
-		"INSERT INTO tasks (description, price, status) VALUES (?, ?, ?)",
-		s.Description, s.Price, s.Status,
-	)
+	sqlStatement := `INSERT INTO users (description, price, status)
+	VALUES ($1, $2, $3)
+	RETURNING id`
+	id := 0
+	err := m.conn.QueryRow(sqlStatement, s.Description, s.Price, s.Status).Scan(&id)
 	if err != nil {
-		return s, err
+		panic(err)
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return s, err
-	}
-	s.ID = id
+	s.ID = int64(id)
 	return s, nil
 }
 
@@ -128,10 +123,11 @@ func (m *PgSQL) ListTasks() ([]model.Task, error) {
 
 // UpdateTask updates task entry in database
 func (m *PgSQL) UpdateTask(s model.Task) (model.Task, error) {
-	_, err := m.conn.Exec(
-		"UPDATE tasks SET description=?, price=?, status=? WHERE id=?",
-		s.Description, s.Price, s.Status, s.ID,
-	)
+	sqlStatement := `UPDATE tasks
+	SET description = $2, price = $3, status = $4
+	WHERE id = $1;`
+	_, err := m.conn.Exec(sqlStatement, s.ID, s.Description, s.Price, s.Status)
+
 	if err != nil {
 		return s, err
 	}
@@ -153,19 +149,17 @@ func (m *PgSQL) DeleteTask(id int64) error {
 
 // CreateBilling creates billing entry in database
 func (m *PgSQL) CreateBilling(s model.Billing) (model.Billing, error) {
-	res, err := m.conn.Exec(
-		"INSERT INTO billings (sender, reciever, amount, time_bill, task_id, btype) VALUES (?, ?, ?, ?, ?,?)",
-		s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType,
-	)
+	sqlStatement := `INSERT INTO users (sender, reciever, amount, time_bill, task_id, btype)
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING id`
+	id := 0
+	err := m.conn.QueryRow(sqlStatement, s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType).Scan(&id)
 	if err != nil {
-		return s, err
+		panic(err)
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return s, err
-	}
-	s.ID = id
+	s.ID = int64(id)
 	return s, nil
+
 }
 
 // SelectBilling selects billing entry from database
@@ -184,15 +178,16 @@ func (m *PgSQL) ListBillings() ([]model.Billing, error) {
 
 // UpdateBilling updates billing entry in database
 func (m *PgSQL) UpdateBilling(s model.Billing) (model.Billing, error) {
-	_, err := m.conn.Exec(
-		"UPDATE billings SET sender=?, reciever=?, amount=?, time_bill=?, task_id=?, btype=? WHERE id=?",
-		s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID,
-	)
+	sqlStatement := `UPDATE billings
+	SET sender=$1, reciever=$2, amount=$3, time_bill=$4, task_id=$5, btype=$6
+	WHERE id = $7;`
+	_, err := m.conn.Exec(sqlStatement, s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID)
+
 	if err != nil {
 		return s, err
 	}
 	var i model.Billing
-	err = m.conn.Get(&i, "SELECT * FROM billings WHERE id=?", s.ID)
+	err = m.conn.Get(&i, "SELECT * FROM tasks WHERE id=?", s.ID)
 	return i, err
 }
 

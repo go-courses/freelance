@@ -1,10 +1,20 @@
 package db
 
 import (
+	"fmt"
+
 	"github.com/go-courses/freelance/config"
 	"github.com/go-courses/freelance/model"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "dbuser_f"
+	password = "dbpass_f"
+	dbname   = "freelance"
 )
 
 // PgSQL provides api for work with PgSQL database
@@ -14,7 +24,11 @@ type PgSQL struct {
 
 // NewPgSQL creates a new instance of database API
 func NewPgSQL(c *config.FreelanceConfig) (*PgSQL, error) {
-	if conn, err := sqlx.Connect("postgres", c.DatabaseURL); err != nil {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	if conn, err := sqlx.Connect("postgres", psqlInfo); err != nil {
 		return nil, err
 	} else {
 		p := &PgSQL{conn: conn}

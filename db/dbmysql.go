@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"go/build"
+	"os"
 
 	// This line is must for working MySQL database
 
@@ -20,6 +22,14 @@ import (
 type MySQL struct {
 	conn        *sqlx.DB
 	connmigrate *sql.DB
+}
+
+func getPath() string {
+	gp := os.Getenv("GOPATH")
+	if gp == "" {
+		gp = build.Default.GOPATH
+	}
+	return gp
 }
 
 // NewMySQL creates a new instance of database API
@@ -41,7 +51,7 @@ func NewMySQL(c *config.FreelanceConfig) (*MySQL, error) {
 func (m *MySQL) MigrateUp() error {
 	driver, _ := mysql.WithInstance(m.connmigrate, &mysql.Config{})
 	migration, err := migrate.NewWithDatabaseInstance(
-		"file:///home/meder/go/src/github.com/go-courses/freelance/migrations/mysql",
+		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/mysql",
 		"mysql",
 		driver,
 	)
@@ -60,13 +70,17 @@ func (m *MySQL) MigrateUp() error {
 // MigrateDown - delete tables
 func (m *MySQL) MigrateDown() error {
 	driver, _ := mysql.WithInstance(m.connmigrate, &mysql.Config{})
-	migration, _ := migrate.NewWithDatabaseInstance(
-		"file:///home/meder/go/src/github.com/go-courses/freelance/migrations/mysql",
+	migration, err := migrate.NewWithDatabaseInstance(
+		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/mysql",
 		"mysql",
 		driver,
 	)
 
-	err := migration.Down()
+	if err != nil {
+		return errors.Wrap(err, "migration file not found")
+	}
+
+	err = migration.Down()
 	if err != nil {
 		return errors.Wrap(err, "migration Down error")
 	}

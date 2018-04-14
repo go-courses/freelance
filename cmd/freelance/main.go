@@ -16,7 +16,7 @@ func main() {
 		log.Fatal(err, "could not get env conf parms")
 	}
 
-	api.NewServer(c)
+	s, err := api.NewServer(c)
 
 	// подключение для PostgreSQL or MySQL, расскоментить нужное
 	//conn, err := db.NewMySQL(c)
@@ -37,7 +37,7 @@ func main() {
 
 	// fire the gRPC server in a goroutine
 	go func() {
-		err := server.StartGRPCServer(grpcAddress)
+		err := server.StartGRPCServer(grpcAddress, s)
 		if err != nil {
 			log.Fatalf("failed to start gRPC server: %s", err)
 		}

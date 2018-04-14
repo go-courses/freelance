@@ -14,7 +14,7 @@ import (
 )
 
 // StartGRPCServer для запуска grpc сервера
-func StartGRPCServer(address string) error {
+func StartGRPCServer(address string, s *api.Server) error {
 	// create a listener on TCP port
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
@@ -22,13 +22,11 @@ func StartGRPCServer(address string) error {
 	}
 
 	// create a server instance
-	s := api.Server{}
-
 	// create a gRPC server object
 	grpcServer := grpc.NewServer()
 
 	// attach the DoUser service to the server
-	api.RegisterDoUsersServer(grpcServer, &s)
+	api.RegisterDoUsersServer(grpcServer, s)
 
 	// start the server
 	log.Printf("starting HTTP/2 gRPC server on %s", address)

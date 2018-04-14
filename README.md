@@ -57,9 +57,16 @@ grant all privileges on database freelance to dbuser_f;
 
 ## Пример запуска
 
+- необходимо сначала экспортировать переменные окружения
+
+ export DB_TYPE="mysql" (либо pgsql)
+ export DO_MIGRATION="No" (либо Yes)
+
 - пока работает только метод CreateUser
 - go run main.go
-- и в терминале вводим команду и видим возвращаемую id юзера: 
+- и в терминале вводим команду и видим возвращаемую id юзера:
+
 curl -X POST -k http://localhost:7778/api/user -d '{"name":"firstuser", "utype":"client", "balance":1}'
+
 - в базе создается наш юзер
 - доработать остальные методы ...

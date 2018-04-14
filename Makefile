@@ -30,3 +30,9 @@ mysqlenv:
 pgsqlenv:
 	export DATABASE_URL="postgres://dbuser_f:dbpass_f@localhost:5432/freelance?query"
 
+dbtype:
+    export DB_TYPE="mysql"
+
+domigrate:
+    export DO_MIGRATION="No"
+

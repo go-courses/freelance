@@ -4,15 +4,19 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-courses/freelance/api"
+	"github.com/go-courses/freelance/config"
 	server "github.com/go-courses/freelance/server"
 )
 
 func main() {
 	// Read config from system environment
-	/*c, err := config.GetConfig()
+	c, err := config.GetConfig()
 	if err != nil {
 		log.Fatal(err, "could not get env conf parms")
-	}*/
+	}
+
+	api.NewServer(c)
 
 	// подключение для PostgreSQL or MySQL, расскоментить нужное
 	//conn, err := db.NewMySQL(c)

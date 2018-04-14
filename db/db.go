@@ -2,7 +2,7 @@ package db
 
 import "github.com/go-courses/freelance/model"
 
-type db interface {
+type DB interface {
 	CreateUser(s model.User) (model.User, error)
 	SelectUser(id int64) (model.User, error)
 	ListUsers() ([]model.User, error)

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	"errors"
 	"log"
 
 	"github.com/go-courses/freelance/config"
@@ -11,7 +11,31 @@ import (
 )
 
 // Server represents the gRPC server
-type Server struct{}
+type Server struct {
+	db db.DB
+	c  *config.FreelanceConfig
+}
+
+func NewServer(c *config.FreelanceConfig) (*Server, error) {
+	s := &Server{c: c}
+	switch c.DbType {
+	case "mysql":
+		conn, err := db.NewMySQL(c)
+		if err != nil {
+			return nil, err
+		}
+		s.db = conn
+	case "postgres":
+		conn, err := db.NewPgSQL(c)
+		if err != nil {
+			return nil, err
+		}
+		s.db = conn
+	default:
+		return nil, errors.New("unknown database type")
+	}
+	return s, nil
+}
 
 // CreateUser generates responce id from DB
 func (s *Server) CreateUser(ctx context.Context, in *User) (*UserId, error) {
@@ -20,20 +44,7 @@ func (s *Server) CreateUser(ctx context.Context, in *User) (*UserId, error) {
 	u.UserType = in.Utype
 	u.Balance = int32(in.Balance)
 
-	// Read config from system environment
-	c, err := config.GetConfig()
-	if err != nil {
-		log.Fatal(err, "could not get env conf parms")
-	}
-
-	// подключение для PostgreSQL or MySQL, расскоментить нужное
-	m, err := db.NewMySQL(c)
-	//m, err := db.NewPgSQL(c)
-	if err != nil {
-		fmt.Println(err, " could not create database connection")
-	}
-
-	uid, err := m.CreateUser(u)
+	uid, err := s.db.CreateUser(u)
 	if err != nil {
 		return nil, err
 	}

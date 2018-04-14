@@ -10,6 +10,10 @@ It is generated from these files:
 It has these top-level messages:
 	User
 	UserId
+	Task
+	TaskId
+	Billing
+	BillingId
 */
 package api
 
@@ -17,6 +21,7 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
+import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
 
 import (
 	context "golang.org/x/net/context"
@@ -90,9 +95,149 @@ func (m *UserId) GetId() int64 {
 	return 0
 }
 
+type Task struct {
+	Id          int64  `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Description string `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	Price       int32  `protobuf:"varint,3,opt,name=price" json:"price,omitempty"`
+	Status      string `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+}
+
+func (m *Task) Reset()                    { *m = Task{} }
+func (m *Task) String() string            { return proto.CompactTextString(m) }
+func (*Task) ProtoMessage()               {}
+func (*Task) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *Task) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Task) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *Task) GetPrice() int32 {
+	if m != nil {
+		return m.Price
+	}
+	return 0
+}
+
+func (m *Task) GetStatus() string {
+	if m != nil {
+		return m.Status
+	}
+	return ""
+}
+
+type TaskId struct {
+	Id int64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+}
+
+func (m *TaskId) Reset()                    { *m = TaskId{} }
+func (m *TaskId) String() string            { return proto.CompactTextString(m) }
+func (*TaskId) ProtoMessage()               {}
+func (*TaskId) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *TaskId) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+type Billing struct {
+	Id       int64                       `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Sender   string                      `protobuf:"bytes,2,opt,name=sender" json:"sender,omitempty"`
+	Reciever string                      `protobuf:"bytes,3,opt,name=reciever" json:"reciever,omitempty"`
+	Amount   int32                       `protobuf:"varint,4,opt,name=amount" json:"amount,omitempty"`
+	TimeBill *google_protobuf1.Timestamp `protobuf:"bytes,5,opt,name=time_bill,json=timeBill" json:"time_bill,omitempty"`
+	TaskId   int32                       `protobuf:"varint,6,opt,name=task_id,json=taskId" json:"task_id,omitempty"`
+	Btype    string                      `protobuf:"bytes,7,opt,name=btype" json:"btype,omitempty"`
+}
+
+func (m *Billing) Reset()                    { *m = Billing{} }
+func (m *Billing) String() string            { return proto.CompactTextString(m) }
+func (*Billing) ProtoMessage()               {}
+func (*Billing) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *Billing) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Billing) GetSender() string {
+	if m != nil {
+		return m.Sender
+	}
+	return ""
+}
+
+func (m *Billing) GetReciever() string {
+	if m != nil {
+		return m.Reciever
+	}
+	return ""
+}
+
+func (m *Billing) GetAmount() int32 {
+	if m != nil {
+		return m.Amount
+	}
+	return 0
+}
+
+func (m *Billing) GetTimeBill() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.TimeBill
+	}
+	return nil
+}
+
+func (m *Billing) GetTaskId() int32 {
+	if m != nil {
+		return m.TaskId
+	}
+	return 0
+}
+
+func (m *Billing) GetBtype() string {
+	if m != nil {
+		return m.Btype
+	}
+	return ""
+}
+
+type BillingId struct {
+	Id int64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+}
+
+func (m *BillingId) Reset()                    { *m = BillingId{} }
+func (m *BillingId) String() string            { return proto.CompactTextString(m) }
+func (*BillingId) ProtoMessage()               {}
+func (*BillingId) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+
+func (m *BillingId) GetId() int64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*User)(nil), "api.User")
 	proto.RegisterType((*UserId)(nil), "api.UserId")
+	proto.RegisterType((*Task)(nil), "api.Task")
+	proto.RegisterType((*TaskId)(nil), "api.TaskId")
+	proto.RegisterType((*Billing)(nil), "api.Billing")
+	proto.RegisterType((*BillingId)(nil), "api.BillingId")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -110,6 +255,7 @@ type DoUsersClient interface {
 	SelectUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
 	ListUsers(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error)
 }
 
 type doUsersClient struct {
@@ -156,6 +302,15 @@ func (c *doUsersClient) UpdateUser(ctx context.Context, in *User, opts ...grpc.C
 	return out, nil
 }
 
+func (c *doUsersClient) DeleteUser(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := grpc.Invoke(ctx, "/api.DoUsers/DeleteUser", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for DoUsers service
 
 type DoUsersServer interface {
@@ -163,6 +318,7 @@ type DoUsersServer interface {
 	SelectUser(context.Context, *UserId) (*User, error)
 	ListUsers(context.Context, *User) (*User, error)
 	UpdateUser(context.Context, *User) (*User, error)
+	DeleteUser(context.Context, *UserId) (*User, error)
 }
 
 func RegisterDoUsersServer(s *grpc.Server, srv DoUsersServer) {
@@ -241,6 +397,24 @@ func _DoUsers_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DoUsers_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoUsersServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoUsers/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoUsersServer).DeleteUser(ctx, req.(*UserId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DoUsers_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "api.DoUsers",
 	HandlerType: (*DoUsersServer)(nil),
@@ -261,6 +435,402 @@ var _DoUsers_serviceDesc = grpc.ServiceDesc{
 			MethodName: "UpdateUser",
 			Handler:    _DoUsers_UpdateUser_Handler,
 		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _DoUsers_DeleteUser_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api.proto",
+}
+
+// Client API for DoTasks service
+
+type DoTasksClient interface {
+	CreateTask(ctx context.Context, in *Task, opts ...grpc.CallOption) (*TaskId, error)
+	SelectTask(ctx context.Context, in *TaskId, opts ...grpc.CallOption) (*Task, error)
+	ListTasks(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Task, error)
+	UpdateTask(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Task, error)
+	DeleteTask(ctx context.Context, in *TaskId, opts ...grpc.CallOption) (*Task, error)
+}
+
+type doTasksClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewDoTasksClient(cc *grpc.ClientConn) DoTasksClient {
+	return &doTasksClient{cc}
+}
+
+func (c *doTasksClient) CreateTask(ctx context.Context, in *Task, opts ...grpc.CallOption) (*TaskId, error) {
+	out := new(TaskId)
+	err := grpc.Invoke(ctx, "/api.DoTasks/CreateTask", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doTasksClient) SelectTask(ctx context.Context, in *TaskId, opts ...grpc.CallOption) (*Task, error) {
+	out := new(Task)
+	err := grpc.Invoke(ctx, "/api.DoTasks/SelectTask", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doTasksClient) ListTasks(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Task, error) {
+	out := new(Task)
+	err := grpc.Invoke(ctx, "/api.DoTasks/ListTasks", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doTasksClient) UpdateTask(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Task, error) {
+	out := new(Task)
+	err := grpc.Invoke(ctx, "/api.DoTasks/UpdateTask", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doTasksClient) DeleteTask(ctx context.Context, in *TaskId, opts ...grpc.CallOption) (*Task, error) {
+	out := new(Task)
+	err := grpc.Invoke(ctx, "/api.DoTasks/DeleteTask", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for DoTasks service
+
+type DoTasksServer interface {
+	CreateTask(context.Context, *Task) (*TaskId, error)
+	SelectTask(context.Context, *TaskId) (*Task, error)
+	ListTasks(context.Context, *Task) (*Task, error)
+	UpdateTask(context.Context, *Task) (*Task, error)
+	DeleteTask(context.Context, *TaskId) (*Task, error)
+}
+
+func RegisterDoTasksServer(s *grpc.Server, srv DoTasksServer) {
+	s.RegisterService(&_DoTasks_serviceDesc, srv)
+}
+
+func _DoTasks_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Task)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoTasksServer).CreateTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoTasks/CreateTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoTasksServer).CreateTask(ctx, req.(*Task))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoTasks_SelectTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoTasksServer).SelectTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoTasks/SelectTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoTasksServer).SelectTask(ctx, req.(*TaskId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoTasks_ListTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Task)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoTasksServer).ListTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoTasks/ListTasks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoTasksServer).ListTasks(ctx, req.(*Task))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoTasks_UpdateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Task)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoTasksServer).UpdateTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoTasks/UpdateTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoTasksServer).UpdateTask(ctx, req.(*Task))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoTasks_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoTasksServer).DeleteTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoTasks/DeleteTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoTasksServer).DeleteTask(ctx, req.(*TaskId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _DoTasks_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.DoTasks",
+	HandlerType: (*DoTasksServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateTask",
+			Handler:    _DoTasks_CreateTask_Handler,
+		},
+		{
+			MethodName: "SelectTask",
+			Handler:    _DoTasks_SelectTask_Handler,
+		},
+		{
+			MethodName: "ListTasks",
+			Handler:    _DoTasks_ListTasks_Handler,
+		},
+		{
+			MethodName: "UpdateTask",
+			Handler:    _DoTasks_UpdateTask_Handler,
+		},
+		{
+			MethodName: "DeleteTask",
+			Handler:    _DoTasks_DeleteTask_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api.proto",
+}
+
+// Client API for DoBillings service
+
+type DoBillingsClient interface {
+	CreateBilling(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*BillingId, error)
+	SelectBilling(ctx context.Context, in *BillingId, opts ...grpc.CallOption) (*Billing, error)
+	ListBillings(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*Billing, error)
+	UpdateBilling(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*Billing, error)
+	DeleteBilling(ctx context.Context, in *BillingId, opts ...grpc.CallOption) (*Billing, error)
+}
+
+type doBillingsClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewDoBillingsClient(cc *grpc.ClientConn) DoBillingsClient {
+	return &doBillingsClient{cc}
+}
+
+func (c *doBillingsClient) CreateBilling(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*BillingId, error) {
+	out := new(BillingId)
+	err := grpc.Invoke(ctx, "/api.DoBillings/CreateBilling", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doBillingsClient) SelectBilling(ctx context.Context, in *BillingId, opts ...grpc.CallOption) (*Billing, error) {
+	out := new(Billing)
+	err := grpc.Invoke(ctx, "/api.DoBillings/SelectBilling", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doBillingsClient) ListBillings(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*Billing, error) {
+	out := new(Billing)
+	err := grpc.Invoke(ctx, "/api.DoBillings/ListBillings", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doBillingsClient) UpdateBilling(ctx context.Context, in *Billing, opts ...grpc.CallOption) (*Billing, error) {
+	out := new(Billing)
+	err := grpc.Invoke(ctx, "/api.DoBillings/UpdateBilling", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *doBillingsClient) DeleteBilling(ctx context.Context, in *BillingId, opts ...grpc.CallOption) (*Billing, error) {
+	out := new(Billing)
+	err := grpc.Invoke(ctx, "/api.DoBillings/DeleteBilling", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for DoBillings service
+
+type DoBillingsServer interface {
+	CreateBilling(context.Context, *Billing) (*BillingId, error)
+	SelectBilling(context.Context, *BillingId) (*Billing, error)
+	ListBillings(context.Context, *Billing) (*Billing, error)
+	UpdateBilling(context.Context, *Billing) (*Billing, error)
+	DeleteBilling(context.Context, *BillingId) (*Billing, error)
+}
+
+func RegisterDoBillingsServer(s *grpc.Server, srv DoBillingsServer) {
+	s.RegisterService(&_DoBillings_serviceDesc, srv)
+}
+
+func _DoBillings_CreateBilling_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Billing)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoBillingsServer).CreateBilling(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoBillings/CreateBilling",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoBillingsServer).CreateBilling(ctx, req.(*Billing))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoBillings_SelectBilling_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BillingId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoBillingsServer).SelectBilling(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoBillings/SelectBilling",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoBillingsServer).SelectBilling(ctx, req.(*BillingId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoBillings_ListBillings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Billing)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoBillingsServer).ListBillings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoBillings/ListBillings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoBillingsServer).ListBillings(ctx, req.(*Billing))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoBillings_UpdateBilling_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Billing)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoBillingsServer).UpdateBilling(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoBillings/UpdateBilling",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoBillingsServer).UpdateBilling(ctx, req.(*Billing))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DoBillings_DeleteBilling_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BillingId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DoBillingsServer).DeleteBilling(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.DoBillings/DeleteBilling",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DoBillingsServer).DeleteBilling(ctx, req.(*BillingId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _DoBillings_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "api.DoBillings",
+	HandlerType: (*DoBillingsServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateBilling",
+			Handler:    _DoBillings_CreateBilling_Handler,
+		},
+		{
+			MethodName: "SelectBilling",
+			Handler:    _DoBillings_SelectBilling_Handler,
+		},
+		{
+			MethodName: "ListBillings",
+			Handler:    _DoBillings_ListBillings_Handler,
+		},
+		{
+			MethodName: "UpdateBilling",
+			Handler:    _DoBillings_UpdateBilling_Handler,
+		},
+		{
+			MethodName: "DeleteBilling",
+			Handler:    _DoBillings_DeleteBilling_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api.proto",
@@ -269,23 +839,45 @@ var _DoUsers_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("api.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 276 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x90, 0x41, 0x4b, 0xc3, 0x30,
-	0x14, 0xc7, 0x49, 0xdb, 0x6d, 0xf4, 0x29, 0x45, 0x1e, 0x43, 0x42, 0xf1, 0x50, 0x72, 0x2a, 0x1e,
-	0x56, 0x50, 0xbc, 0x0c, 0x6f, 0x7a, 0x19, 0x78, 0xaa, 0xec, 0xe2, 0x2d, 0x5b, 0x1e, 0x23, 0x50,
-	0x9b, 0xd0, 0x66, 0x07, 0x11, 0x2f, 0x7e, 0x05, 0x3f, 0x9a, 0x5f, 0xc1, 0xcf, 0xe0, 0x59, 0x9a,
-	0x62, 0x2d, 0x73, 0xb7, 0xff, 0x4b, 0xf2, 0xfb, 0xff, 0xff, 0x79, 0x10, 0x4b, 0xab, 0x17, 0xb6,
-	0x31, 0xce, 0x60, 0x28, 0xad, 0x4e, 0x2f, 0x76, 0xc6, 0xec, 0x2a, 0x2a, 0xa4, 0xd5, 0x85, 0xac,
-	0x6b, 0xe3, 0xa4, 0xd3, 0xa6, 0x6e, 0xfb, 0x27, 0xe2, 0x09, 0xa2, 0x75, 0x4b, 0x0d, 0x26, 0x10,
-	0x68, 0xc5, 0x59, 0xc6, 0xf2, 0xb0, 0x0c, 0xb4, 0x42, 0x84, 0xa8, 0x96, 0xcf, 0xc4, 0x83, 0x8c,
-	0xe5, 0x71, 0xe9, 0x35, 0xce, 0x61, 0xb2, 0x77, 0x2f, 0x96, 0x78, 0xe8, 0x0f, 0xfb, 0x01, 0x39,
-	0xcc, 0x36, 0xb2, 0x92, 0xf5, 0x96, 0x78, 0x94, 0xb1, 0x7c, 0x52, 0xfe, 0x8e, 0x82, 0xc3, 0xb4,
-	0xf3, 0x5e, 0xa9, 0x43, 0xf7, 0xab, 0x6f, 0x06, 0xb3, 0x7b, 0xd3, 0x5d, 0xb6, 0xb8, 0x04, 0xb8,
-	0x6b, 0x48, 0x3a, 0xf2, 0x3d, 0xe2, 0x45, 0x57, 0xbf, 0x93, 0xe9, 0xc9, 0x20, 0x57, 0x4a, 0xcc,
-	0xdf, 0x3f, 0xbf, 0x3e, 0x82, 0x44, 0xc4, 0xfe, 0x1f, 0xfb, 0x96, 0x9a, 0x25, 0xbb, 0xc4, 0x5b,
-	0x80, 0x47, 0xaa, 0x68, 0xeb, 0x3c, 0x3b, 0x06, 0xd2, 0x3f, 0x23, 0x71, 0xee, 0xd9, 0x33, 0x4c,
-	0x06, 0xb6, 0x78, 0xd5, 0xea, 0x0d, 0x6f, 0x20, 0x7e, 0xd0, 0xad, 0xeb, 0x6b, 0x8c, 0x82, 0x47,
-	0x28, 0x7a, 0xf4, 0x14, 0x61, 0x40, 0x7d, 0xe1, 0xb5, 0x55, 0x47, 0x0a, 0xff, 0x8f, 0x14, 0x07,
-	0x91, 0x9b, 0xa9, 0xdf, 0xfa, 0xf5, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xa9, 0x98, 0xcb, 0x5c,
-	0xa5, 0x01, 0x00, 0x00,
+	// 631 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
+	0x14, 0x95, 0xdd, 0xfc, 0xd4, 0x37, 0x3f, 0xdf, 0xd7, 0x21, 0xb4, 0xc6, 0x20, 0x11, 0xcd, 0x2a,
+	0xca, 0x22, 0x91, 0x82, 0x10, 0x52, 0xd5, 0x0d, 0x10, 0xa1, 0x46, 0x62, 0x65, 0xda, 0x0d, 0x9b,
+	0x6a, 0x1c, 0x4f, 0xa3, 0x51, 0x1d, 0xdb, 0xf2, 0x4c, 0x90, 0x10, 0x62, 0xc3, 0x2b, 0xf0, 0x2a,
+	0xbc, 0x06, 0x2b, 0x5e, 0x81, 0x37, 0xe0, 0x05, 0xd0, 0xfc, 0xc4, 0x1d, 0xdb, 0x91, 0x80, 0xdd,
+	0x9c, 0xc9, 0x9c, 0x73, 0xcf, 0x3d, 0xf7, 0x3a, 0xe0, 0x91, 0x9c, 0xcd, 0xf2, 0x22, 0x13, 0x19,
+	0x3a, 0x22, 0x39, 0x0b, 0x9e, 0x6c, 0xb2, 0x6c, 0x93, 0xd0, 0x39, 0xc9, 0xd9, 0x9c, 0xa4, 0x69,
+	0x26, 0x88, 0x60, 0x59, 0xca, 0xf5, 0x93, 0xe0, 0xa9, 0xf9, 0x55, 0xa1, 0x68, 0x77, 0x3b, 0x17,
+	0x6c, 0x4b, 0xb9, 0x20, 0xdb, 0x5c, 0x3f, 0xc0, 0xef, 0xa1, 0x75, 0xcd, 0x69, 0x81, 0x86, 0xe0,
+	0xb2, 0xd8, 0x77, 0xc6, 0xce, 0xe4, 0x28, 0x74, 0x59, 0x8c, 0x10, 0xb4, 0x52, 0xb2, 0xa5, 0xbe,
+	0x3b, 0x76, 0x26, 0x5e, 0xa8, 0xce, 0x68, 0x04, 0xed, 0x9d, 0xf8, 0x98, 0x53, 0xff, 0x48, 0x5d,
+	0x6a, 0x80, 0x7c, 0xe8, 0x46, 0x24, 0x21, 0xe9, 0x9a, 0xfa, 0xad, 0xb1, 0x33, 0x69, 0x87, 0x7b,
+	0x88, 0x7d, 0xe8, 0x48, 0xed, 0x55, 0x5c, 0x57, 0xc7, 0xb7, 0xd0, 0xba, 0x22, 0xfc, 0xae, 0x51,
+	0x75, 0x0c, 0xbd, 0x98, 0xf2, 0x75, 0xc1, 0x72, 0xd9, 0x84, 0x29, 0x6e, 0x5f, 0x49, 0x0f, 0x79,
+	0xc1, 0xd6, 0xda, 0x43, 0x3b, 0xd4, 0x00, 0x9d, 0x42, 0x87, 0x0b, 0x22, 0x76, 0x5c, 0x59, 0xf0,
+	0x42, 0x83, 0xa4, 0x03, 0x59, 0xe7, 0x80, 0x83, 0xef, 0x0e, 0x74, 0x5f, 0xb1, 0x24, 0x61, 0xe9,
+	0xa6, 0xe1, 0x42, 0xaa, 0xd1, 0x34, 0xa6, 0x85, 0x31, 0x60, 0x10, 0x0a, 0xe0, 0xb8, 0xa0, 0x6b,
+	0x46, 0x3f, 0xd0, 0xc2, 0x44, 0x50, 0x62, 0xc9, 0x21, 0xdb, 0x6c, 0x97, 0x0a, 0x13, 0x82, 0x41,
+	0xe8, 0x05, 0x78, 0x32, 0xf2, 0x9b, 0x88, 0x25, 0x89, 0xdf, 0x1e, 0x3b, 0x93, 0xde, 0x22, 0x98,
+	0xe9, 0xa1, 0xcc, 0xf6, 0x43, 0x99, 0x5d, 0xed, 0x87, 0x12, 0x1e, 0xcb, 0xc7, 0xd2, 0x17, 0x3a,
+	0x83, 0xae, 0x20, 0xfc, 0xee, 0x86, 0xc5, 0x7e, 0x47, 0x2b, 0x0a, 0xdd, 0xc9, 0x08, 0xda, 0x91,
+	0x9a, 0x42, 0x57, 0x4f, 0x41, 0x01, 0xfc, 0x18, 0x3c, 0xd3, 0x4e, 0xb3, 0xd9, 0xc5, 0x37, 0x17,
+	0xba, 0xcb, 0x4c, 0xce, 0x82, 0xa3, 0x73, 0x80, 0xd7, 0x05, 0x25, 0x82, 0xaa, 0xb1, 0x7b, 0x33,
+	0xb9, 0x4e, 0xf2, 0x18, 0xf4, 0xca, 0xe3, 0x2a, 0xc6, 0xa3, 0x2f, 0x3f, 0x7e, 0x7e, 0x75, 0x87,
+	0xd8, 0x53, 0x7b, 0xb5, 0xe3, 0xb4, 0x38, 0x77, 0xa6, 0xe8, 0x02, 0xe0, 0x1d, 0x4d, 0xe8, 0x5a,
+	0x28, 0xae, 0x4d, 0x08, 0xee, 0x85, 0xf0, 0xa9, 0xe2, 0xfe, 0x8f, 0x86, 0x25, 0x77, 0xfe, 0x89,
+	0xc5, 0x9f, 0xd1, 0x73, 0xf0, 0xde, 0x32, 0x2e, 0xb4, 0x0d, 0xab, 0xb0, 0x45, 0x45, 0x8a, 0xda,
+	0x47, 0x50, 0x52, 0x95, 0xe1, 0xeb, 0x3c, 0x3e, 0x60, 0xb8, 0x59, 0x12, 0xd7, 0x4b, 0x5e, 0x00,
+	0x2c, 0x69, 0x42, 0x0d, 0xf7, 0x0f, 0x86, 0xa7, 0x35, 0xb6, 0x89, 0x4d, 0x2e, 0x90, 0x15, 0x9b,
+	0xda, 0x5b, 0x4d, 0x96, 0x47, 0x13, 0x9b, 0xde, 0xb2, 0x5a, 0x6c, 0x72, 0x60, 0x95, 0xd8, 0x14,
+	0xd7, 0x26, 0x04, 0xf7, 0x42, 0xb5, 0xd8, 0x24, 0xb7, 0x12, 0x9b, 0xb6, 0x61, 0x15, 0xb6, 0xa8,
+	0xd5, 0xd8, 0xc4, 0xde, 0xb0, 0x8e, 0xad, 0x6e, 0xb8, 0x59, 0x12, 0xd7, 0x4b, 0x96, 0xb1, 0xfd,
+	0x8d, 0xe1, 0x69, 0x8d, 0xbd, 0xf8, 0xe5, 0x02, 0x2c, 0x33, 0xb3, 0x8d, 0x1c, 0xbd, 0x81, 0x81,
+	0x4e, 0x6e, 0xff, 0xb9, 0xf5, 0x95, 0x84, 0x41, 0xc1, 0xd0, 0x46, 0xab, 0x18, 0x9f, 0x29, 0xd5,
+	0x13, 0xdc, 0x57, 0xaa, 0x91, 0xbe, 0x97, 0x29, 0x5e, 0xc2, 0x40, 0xa7, 0x58, 0x7e, 0xb6, 0x55,
+	0x66, 0x50, 0xd1, 0xc5, 0x8f, 0x94, 0xce, 0x03, 0x74, 0x62, 0xeb, 0xe8, 0xf6, 0x5e, 0x42, 0x5f,
+	0x26, 0x5a, 0x3a, 0xac, 0x1a, 0xaa, 0xca, 0x3c, 0x54, 0x32, 0xff, 0xa1, 0x81, 0x2d, 0xa3, 0x9a,
+	0xd2, 0xe9, 0x1e, 0x6e, 0xea, 0xa0, 0x15, 0x7c, 0xc0, 0xca, 0x25, 0x0c, 0x74, 0xd2, 0xff, 0xd4,
+	0xd4, 0xb4, 0xa9, 0x14, 0x75, 0xd4, 0xbf, 0xc9, 0xb3, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xfd,
+	0xba, 0x3e, 0x35, 0x20, 0x06, 0x00, 0x00,
 }

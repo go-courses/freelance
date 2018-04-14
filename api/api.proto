@@ -2,6 +2,7 @@ syntax = "proto3";
 package api;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 message User {
     int64 id = 1;
@@ -13,6 +14,32 @@ message User {
 message UserId {
     int64 id = 1;
 }
+
+message Task {
+    int64 id = 1;
+    string description = 2;
+    int32 price = 3;
+    string status = 4;
+}
+
+message TaskId {
+    int64 id = 1;
+}
+
+message Billing {
+    int64 id = 1;
+    string sender = 2;
+    string reciever = 3;
+    int32 amount = 4;
+    google.protobuf.Timestamp time_bill = 5;
+    int32 task_id = 6;
+    string btype = 7;
+}
+
+message BillingId {
+    int64 id = 1;
+}
+
 service DoUsers {
     rpc CreateUser(User) returns (UserId) {
         option (google.api.http) = {
@@ -33,6 +60,69 @@ service DoUsers {
     rpc UpdateUser(User) returns (User) {
         option (google.api.http) = {
             post: "/api/user/{id}"
+        };
+    }
+    rpc DeleteUser(UserId) returns (User) {
+        option (google.api.http) = {
+            delete: "/api/user/{id}"
+        };
+    }
+}
+
+service DoTasks {
+    rpc CreateTask(Task) returns (TaskId) {
+        option (google.api.http) = {
+            post: "/api/task"
+            body: "*"
+        };
+    }
+    rpc SelectTask(TaskId) returns (Task) {
+        option (google.api.http) = {
+            get: "/api/task/{id}"
+        };
+    }
+    rpc ListTasks(Task) returns (Task) {
+        option (google.api.http) = {
+            get: "/api/tasks"
+        };
+    }
+    rpc UpdateTask(Task) returns (Task) {
+        option (google.api.http) = {
+            post: "/api/task/{id}"
+        };
+    }
+    rpc DeleteTask(TaskId) returns (Task) {
+        option (google.api.http) = {
+            delete: "/api/task/{id}"
+        };
+    }
+}
+
+service DoBillings {
+    rpc CreateBilling(Billing) returns (BillingId) {
+        option (google.api.http) = {
+            post: "/api/billing"
+            body: "*"
+        };
+    }
+    rpc SelectBilling(BillingId) returns (Billing) {
+        option (google.api.http) = {
+            get: "/api/billing/{id}"
+        };
+    }
+    rpc ListBillings(Billing) returns (Billing) {
+        option (google.api.http) = {
+            get: "/api/billings"
+        };
+    }
+    rpc UpdateBilling(Billing) returns (Billing) {
+        option (google.api.http) = {
+            post: "/api/billing/{id}"
+        };
+    }
+    rpc DeleteBilling(BillingId) returns (Billing) {
+        option (google.api.http) = {
+            delete: "/api/billing/{id}"
         };
     }
 }

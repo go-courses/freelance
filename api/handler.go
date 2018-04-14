@@ -90,3 +90,57 @@ func (s *Server) UpdateUser(ctx context.Context, in *User) (*User, error) {
 
 	return &User{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
 }
+
+// CreateTask generates responce id from DB
+func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
+	var u model.Task
+	u.Description = in.Description
+	u.Price = int32(in.Price)
+	u.Status = in.Status
+
+	uid, err := s.db.CreateTask(u)
+	if err != nil {
+		return nil, err
+	}
+
+	return &TaskId{Id: uid.ID}, nil
+}
+
+// SelectTask responce selected Task
+func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
+	log.Printf("Recieve message Task Id %d", in.Id)
+	var uid int64
+	var balance int32
+	uid = 555
+	name := "TestTask555"
+	utype := "client"
+	balance = 10
+
+	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+}
+
+// ListTasks responce list of Tasks
+func (s *Server) ListTasks(ctx context.Context, in *Task) (*Task, error) {
+	log.Printf("Recieve message Task Id %d", in.Id)
+	var uid int64
+	var balance int32
+	uid = 666
+	name := "TestTask666"
+	utype := "client"
+	balance = 66
+
+	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+}
+
+// UpdateTask responce updating of Task
+func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
+	log.Printf("Recieve message Task Id %d", in.Id)
+	var uid int64
+	var balance int32
+	uid = 777
+	name := "TestTask777"
+	utype := "client"
+	balance = 77
+
+	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+}

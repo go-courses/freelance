@@ -52,7 +52,7 @@ service DoUsers {
             get: "/api/user/{id}"
         };
     }
-    rpc ListUsers(User) returns (User) {
+    rpc ListUsers(User) returns (stream User) {
         option (google.api.http) = {
             get: "/api/users"
         };
@@ -81,7 +81,7 @@ service DoTasks {
             get: "/api/task/{id}"
         };
     }
-    rpc ListTasks(Task) returns (Task) {
+    rpc ListTasks(Task) returns (stream Task) {
         option (google.api.http) = {
             get: "/api/tasks"
         };
@@ -110,7 +110,7 @@ service DoBillings {
             get: "/api/billing/{id}"
         };
     }
-    rpc ListBillings(Billing) returns (Billing) {
+    rpc ListBillings(Billing) returns (stream Billing) {
         option (google.api.http) = {
             get: "/api/billings"
         };

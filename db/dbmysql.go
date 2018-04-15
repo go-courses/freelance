@@ -81,7 +81,7 @@ func (m *MySQL) ListUsers() ([]model.User, error) {
 // UpdateUser updates user entry in database
 func (m *MySQL) UpdateUser(s model.User) (model.User, error) {
 	_, err := m.conn.Exec(
-		"UPDATE `users` SET name=?, utype=?, balance=? WHERE id=?",
+		"UPDATE `users` SET `name` = ?, `utype` = ?, `balance` = ? WHERE `id` = ?",
 		s.Name, s.UserType, s.Balance, s.ID,
 	)
 	if err != nil {

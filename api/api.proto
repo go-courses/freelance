@@ -60,6 +60,7 @@ service DoUsers {
     rpc UpdateUser(User) returns (User) {
         option (google.api.http) = {
             post: "/api/user/{id}"
+            body: "*"
         };
     }
     rpc DeleteUser(UserId) returns (User) {
@@ -89,6 +90,7 @@ service DoTasks {
     rpc UpdateTask(Task) returns (Task) {
         option (google.api.http) = {
             post: "/api/task/{id}"
+            body: "*"
         };
     }
     rpc DeleteTask(TaskId) returns (Task) {
@@ -118,6 +120,7 @@ service DoBillings {
     rpc UpdateBilling(Billing) returns (Billing) {
         option (google.api.http) = {
             post: "/api/billing/{id}"
+            body: "*"
         };
     }
     rpc DeleteBilling(BillingId) returns (Billing) {

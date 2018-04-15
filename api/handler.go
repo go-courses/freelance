@@ -2,7 +2,7 @@ package api
 
 import (
 	"errors"
-	"log"
+	"fmt"
 
 	"github.com/go-courses/freelance/config"
 	"github.com/go-courses/freelance/db"
@@ -16,6 +16,7 @@ type Server struct {
 	c  *config.FreelanceConfig
 }
 
+// NewServer ...
 func NewServer(c *config.FreelanceConfig) (*Server, error) {
 	s := &Server{c: c}
 	switch c.DbType {
@@ -54,41 +55,54 @@ func (s *Server) CreateUser(ctx context.Context, in *User) (*UserId, error) {
 
 // SelectUser responce selected User
 func (s *Server) SelectUser(ctx context.Context, in *UserId) (*User, error) {
-	log.Printf("Recieve message User Id %d", in.Id)
 	var uid int64
-	var balance int32
-	uid = 555
-	name := "Testuser555"
-	utype := "client"
-	balance = 10
+	uid = in.Id
 
-	return &User{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	u, err := s.db.SelectUser(uid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{Id: u.ID, Name: u.Name, Utype: u.UserType, Balance: u.Balance}, nil
 }
 
 // ListUsers responce list of Users
-func (s *Server) ListUsers(ctx context.Context, in *User) (*User, error) {
-	log.Printf("Recieve message User Id %d", in.Id)
-	var uid int64
-	var balance int32
-	uid = 666
-	name := "Testuser666"
-	utype := "client"
-	balance = 66
+func (s *Server) ListUsers(in *User, stream DoUsers_ListUsersServer) error {
+	u, _ := s.db.ListUsers()
 
-	return &User{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	for _, k := range u {
+		if err := stream.Send(&User{Id: k.ID, Name: k.Name, Utype: k.UserType, Balance: k.Balance}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // UpdateUser responce updating of User
 func (s *Server) UpdateUser(ctx context.Context, in *User) (*User, error) {
-	log.Printf("Recieve message User Id %d", in.Id)
-	var uid int64
-	var balance int32
-	uid = 777
-	name := "Testuser777"
-	utype := "client"
-	balance = 77
+	var u model.User
+	u.ID = in.Id
+	u.Name = in.Name
+	u.UserType = in.Utype
+	u.Balance = int32(in.Balance)
 
-	return &User{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	upd, err := s.db.UpdateUser(u)
+	if err != nil {
+		fmt.Println("ErrMySQL:", u.UserType, u.Name, u.ID, err)
+		return nil, err
+	}
+
+	return &User{Id: upd.ID, Name: upd.Name, Utype: upd.UserType, Balance: upd.Balance}, nil
+}
+
+// DeleteUser ...
+func (s *Server) DeleteUser(ctx context.Context, in *UserId) (*User, error) {
+	uid := in.Id
+	err := s.db.DeleteUser(uid)
+	if err != nil {
+		return nil, err
+	}
+	return &User{Id: uid}, nil
 }
 
 // CreateTask generates responce id from DB
@@ -108,39 +122,20 @@ func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
 
 // SelectTask responce selected Task
 func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
-	log.Printf("Recieve message Task Id %d", in.Id)
-	var uid int64
-	var balance int32
-	uid = 555
-	name := "TestTask555"
-	utype := "client"
-	balance = 10
 
-	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	return nil, nil
 }
 
 // ListTasks responce list of Tasks
 func (s *Server) ListTasks(ctx context.Context, in *Task) (*Task, error) {
-	log.Printf("Recieve message Task Id %d", in.Id)
-	var uid int64
-	var balance int32
-	uid = 666
-	name := "TestTask666"
-	utype := "client"
-	balance = 66
 
-	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	return nil, nil
+	//return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
 }
 
 // UpdateTask responce updating of Task
 func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
-	log.Printf("Recieve message Task Id %d", in.Id)
-	var uid int64
-	var balance int32
-	uid = 777
-	name := "TestTask777"
-	utype := "client"
-	balance = 77
 
-	return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	return nil, nil
+	//return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
 }

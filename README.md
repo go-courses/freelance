@@ -69,4 +69,12 @@ grant all privileges on database freelance to dbuser_f;
 curl -X POST -k http://localhost:7778/api/user -d '{"name":"firstuser", "utype":"client", "balance":1}'
 
 - в базе создается наш юзер
+- в терминале вводим команду, для удаления пользователя по номером 4
+
+curl -X DELETE -k http://localhost:7778/api/user/4
+
+- в терминале вводим команду, для обновления пользователя под номером 3
+
+curl -X POST -k http://localhost:7778/api/user/3 -d '{"name":"tom soyer", "utype":"client", "balance":15}'
+
 - доработать остальные методы ...

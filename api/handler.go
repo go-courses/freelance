@@ -3,6 +3,9 @@ package api
 import (
 	"errors"
 	"fmt"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
 
 	"github.com/go-courses/freelance/config"
 	"github.com/go-courses/freelance/db"
@@ -138,4 +141,77 @@ func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
 
 	return nil, nil
 	//return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+}
+
+// CreateBilling generates responce id from DB
+func (s *Server) CreateBilling(ctx context.Context, in *Billing) (*BillingId, error) {
+	var b model.Billing
+	b.Sender = in.Sender
+	b.Reciever = in.Reciever
+	b.Amount = int32(in.Amount)
+	b.BillingType = in.Btype
+	b.TaskID = in.TaskId
+	b.TimeBill = time.Now()
+
+	bid, err := s.db.CreateBilling(b)
+	if err != nil {
+		return nil, err
+	}
+
+	return &BillingId{Id: bid.ID}, nil
+}
+
+// SelectBilling responce selected Billing
+func (s *Server) SelectBilling(ctx context.Context, in *BillingId) (*Billing, error) {
+	var bid int64
+	bid = in.Id
+
+	b, err := s.db.SelectBilling(bid)
+	if err != nil {
+		return nil, err
+	}
+
+	btime, _ := ptypes.TimestampProto(b.TimeBill)
+	return &Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}, nil
+}
+
+// ListBillings responce list of Billings
+func (s *Server) ListBillings(in *Billing, stream DoBillings_ListBillingsServer) error {
+	u, _ := s.db.ListBillings()
+
+	for _, b := range u {
+		btime, _ := ptypes.TimestampProto(b.TimeBill)
+		if err := stream.Send(&Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UpdateBilling responce updating of Billing
+func (s *Server) UpdateBilling(ctx context.Context, in *Billing) (*Billing, error) {
+	var b model.Billing
+	b.Sender = in.Sender
+	b.Reciever = in.Reciever
+	b.Amount = int32(in.Amount)
+	b.BillingType = in.Btype
+	b.TaskID = in.TaskId
+	b.TimeBill = time.Now()
+
+	k, err := s.db.UpdateBilling(b)
+	if err != nil {
+		return nil, err
+	}
+	ktime, _ := ptypes.TimestampProto(k.TimeBill)
+	return &Billing{k.ID, k.Sender, k.Reciever, k.Amount, ktime, k.TaskID, k.BillingType}, nil
+}
+
+// DeleteBilling ...
+func (s *Server) DeleteBilling(ctx context.Context, in *BillingId) (*Billing, error) {
+	bid := in.Id
+	err := s.db.DeleteBilling(bid)
+	if err != nil {
+		return nil, err
+	}
+	return &Billing{Id: bid}, nil
 }

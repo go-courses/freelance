@@ -222,13 +222,15 @@ func request_DoTasks_ListTasks_0(ctx context.Context, marshaler runtime.Marshale
 
 }
 
-var (
-	filter_DoTasks_UpdateTask_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_DoTasks_UpdateTask_0(ctx context.Context, marshaler runtime.Marshaler, client DoTasksClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq Task
 	var metadata runtime.ServerMetadata
+
+	if req.ContentLength > 0 {
+		if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+			return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		}
+	}
 
 	var (
 		val string
@@ -246,10 +248,6 @@ func request_DoTasks_UpdateTask_0(ctx context.Context, marshaler runtime.Marshal
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
-	}
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DoTasks_UpdateTask_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.UpdateTask(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -351,13 +349,15 @@ func request_DoBillings_ListBillings_0(ctx context.Context, marshaler runtime.Ma
 
 }
 
-var (
-	filter_DoBillings_UpdateBilling_0 = &utilities.DoubleArray{Encoding: map[string]int{"id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_DoBillings_UpdateBilling_0(ctx context.Context, marshaler runtime.Marshaler, client DoBillingsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq Billing
 	var metadata runtime.ServerMetadata
+
+	if req.ContentLength > 0 {
+		if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+			return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		}
+	}
 
 	var (
 		val string
@@ -375,10 +375,6 @@ func request_DoBillings_UpdateBilling_0(ctx context.Context, marshaler runtime.M
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
-	}
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DoBillings_UpdateBilling_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.UpdateBilling(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))

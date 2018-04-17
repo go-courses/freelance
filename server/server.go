@@ -27,7 +27,7 @@ func StartGRPCServer(address string, s *api.Server) error {
 
 	// attach the DoUser service to the server
 	api.RegisterDoUsersServer(grpcServer, s)
-
+	api.RegisterDoBillingsServer(grpcServer, s)
 	// start the server
 	log.Printf("starting HTTP/2 gRPC server on %s", address)
 	if err := grpcServer.Serve(lis); err != nil {
@@ -50,7 +50,11 @@ func StartRESTServer(address, grpcAddress string) error {
 	// Register DoUser endpoints
 	err := api.RegisterDoUsersHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
 	if err != nil {
-		return fmt.Errorf("could not register service InfoStatus: %s", err)
+		return fmt.Errorf("could not register service DoUsers: %s", err)
+	}
+	err = api.RegisterDoBillingsHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
+	if err != nil {
+		return fmt.Errorf("could not register service DoBillings: %s", err)
 	}
 
 	log.Printf("starting HTTP/1.1 REST server on %s", address)

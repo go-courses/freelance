@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-courses/freelance/api"
 	"github.com/go-courses/freelance/config"
+	"github.com/go-courses/freelance/db"
 	server "github.com/go-courses/freelance/server"
 )
 
@@ -18,18 +19,23 @@ func main() {
 
 	s, err := api.NewServer(c)
 
-	// подключение для PostgreSQL or MySQL, расскоментить нужное
-	//conn, err := db.NewMySQL(c)
-	/*conn, err := db.NewPgSQL(c)
-	if err != nil {
-		fmt.Println(err, " could not create database connection")
-	}*/
-
-	// этот код для миграции БД, если хотите откатить назад изменить на MigrateDown()
-	/*err = conn.MigrateUp()
-	if err != nil {
-		fmt.Println(err, " could not migrate")
-	}*/
+	// для миграции БД, для отката использовать MigrateDown()
+	if c.DoMigration == "Yes" {
+		switch c.DbType {
+		case "mysql":
+			conn, err := db.NewMySQL(c)
+			if err != nil {
+				log.Fatalf("failed connect to Mysql: %s", err)
+			}
+			err = conn.MigrateUp()
+		case "postgres":
+			conn, err := db.NewPgSQL(c)
+			if err != nil {
+				log.Fatalf("failed connect to PostgreSQL: %s", err)
+			}
+			err = conn.MigrateUp()
+		}
+	}
 
 	// Здесь код запуска rest api сервера
 	grpcAddress := fmt.Sprintf("%s:%d", "localhost", 7777)

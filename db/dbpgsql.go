@@ -75,7 +75,9 @@ func (m *PgSQL) UpdateUser(s model.User) (model.User, error) {
 	sqlStatement := `UPDATE users
 	SET name = $2, utype = $3, balance = $4
 	WHERE id = $1;`
-	_, err := m.conn.Exec(sqlStatement, s.ID, s.Name, s.UserType, s.Balance)
+	tx := m.conn.MustBegin()
+	tx.MustExec(sqlStatement, s.ID, s.Name, s.UserType, s.Balance)
+	err := tx.Commit()
 
 	if err != nil {
 		return s, err
@@ -87,8 +89,7 @@ func (m *PgSQL) UpdateUser(s model.User) (model.User, error) {
 
 // DeleteUser deletes user entry from database
 func (m *PgSQL) DeleteUser(id int64) error {
-	sqlStatement := `DELETE FROM users
-	WHERE id = $1;`
+	sqlStatement := `DELETE FROM users WHERE id = $1;`
 	_, err := m.conn.Exec(sqlStatement, id)
 	if err != nil {
 		panic(err)
@@ -153,7 +154,7 @@ func (m *PgSQL) DeleteTask(id int64) error {
 
 // CreateBilling creates billing entry in database
 func (m *PgSQL) CreateBilling(s model.Billing) (model.Billing, error) {
-	sqlStatement := `INSERT INTO users (sender, reciever, amount, time_bill, task_id, btype)
+	sqlStatement := `INSERT INTO billings (sender, reciever, amount, time_bill, task_id, btype)
 	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id`
 	id := 0
@@ -187,7 +188,9 @@ func (m *PgSQL) UpdateBilling(s model.Billing) (model.Billing, error) {
 	sqlStatement := `UPDATE billings
 	SET sender=$1, reciever=$2, amount=$3, time_bill=$4, task_id=$5, btype=$6
 	WHERE id = $7;`
-	_, err := m.conn.Exec(sqlStatement, s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID)
+	tx := m.conn.MustBegin()
+	tx.MustExec(sqlStatement, s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID)
+	err := tx.Commit()
 
 	if err != nil {
 		return s, err

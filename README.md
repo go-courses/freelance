@@ -47,6 +47,26 @@ grant all privileges on database freelance to dbuser_f;
 - сейчас миграция работает для MySQL и для PgSQL, запускается в main.go. Расскоментировать нужную строку, вторую закоментить. Перед запуском main.go посмотрите Makefile , там есть команда export DATABASE_URL ..., нужно скопипастить и запустить в терминале вручную , для своей БД.
 - в результате выполнения, у вас появятся таблицы в базе. Если захотите откатить назад, тогда в main.go изменить MigrateUp() на MigrateDown(), в результате все таблицы удалятся из БД.
 
+## Транзакции БД
+
+Транзакция — это операция, состоящая из одного или нескольких запросов к базе данных. Суть транзакций — обеспечить корректное выполнение всех запросов в рамках одной транзакции, а так-же обеспечить механизм изоляции транзакций друг от друга для решения проблемы совместного доступа к данным.
+
+Любая транзакция либо выполняется полностью, либо не выполняется вообще.
+
+Пример:
+START TRANSACTION;
+UPDATE user_account SET allsum=allsum + 1000 WHERE id='1';
+UPDATE user_account SET allsum=allsum - 1000 WHERE id='2';
+COMMIT;
+
+В нашем коде используя библиотеку sqlx:
+tx := m.conn.MustBegin()
+tx.MustExec(
+    "UPDATE `billings` SET sender=?, reciever=?, amount=?, time_bill=?, task_id=?, btype=? WHERE id=?",
+    s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID,
+)
+err := tx.Commit()
+
 ## Установка GRPC
 
 - вставим все как описано в офф.сайте
@@ -59,10 +79,11 @@ grant all privileges on database freelance to dbuser_f;
 
 - необходимо сначала экспортировать переменные окружения
 
- export DB_TYPE="mysql" (либо pgsql)
+ export DB_TYPE="mysql" (либо postgres)
  export DO_MIGRATION="No" (либо Yes)
+ export DATABASE_URL=....
 
-- пока работает только метод CreateUser
+- пока работает только методы для User и Billing
 - go run main.go
 - и в терминале вводим команду и видим возвращаемую id юзера:
 
@@ -77,4 +98,5 @@ curl -X DELETE -k http://localhost:7778/api/user/4
 
 curl -X POST -k http://localhost:7778/api/user/3 -d '{"name":"tom soyer", "utype":"client", "balance":15}'
 
-- доработать остальные методы ...
+- аналогично выше указанным командам можно проделать для billing
+- какие методы есть для api смотреть в api.proto

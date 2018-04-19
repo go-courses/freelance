@@ -2,6 +2,7 @@ package db
 
 import "github.com/go-courses/freelance/model"
 
+// DB ...
 type DB interface {
 	CreateUser(s model.User) (model.User, error)
 	SelectUser(id int64) (model.User, error)
@@ -20,4 +21,7 @@ type DB interface {
 	ListBillings() ([]model.Billing, error)
 	UpdateBilling(s model.Billing) (model.Billing, error)
 	DeleteBilling(id int64) error
+
+	MigrateUp() error
+	MigrateDown() error
 }

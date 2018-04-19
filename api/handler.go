@@ -191,6 +191,7 @@ func (s *Server) ListBillings(in *Billing, stream DoBillings_ListBillingsServer)
 // UpdateBilling responce updating of Billing
 func (s *Server) UpdateBilling(ctx context.Context, in *Billing) (*Billing, error) {
 	var b model.Billing
+	b.ID = in.Id
 	b.Sender = in.Sender
 	b.Reciever = in.Reciever
 	b.Amount = int32(in.Amount)
@@ -200,9 +201,13 @@ func (s *Server) UpdateBilling(ctx context.Context, in *Billing) (*Billing, erro
 
 	k, err := s.db.UpdateBilling(b)
 	if err != nil {
+		fmt.Println("UPDATE ERROR", err)
 		return nil, err
 	}
-	ktime, _ := ptypes.TimestampProto(k.TimeBill)
+	ktime, err := ptypes.TimestampProto(k.TimeBill)
+	if err != nil {
+		fmt.Println("Error of Time", err)
+	}
 	return &Billing{k.ID, k.Sender, k.Reciever, k.Amount, ktime, k.TaskID, k.BillingType}, nil
 }
 

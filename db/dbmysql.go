@@ -80,10 +80,13 @@ func (m *MySQL) ListUsers() ([]model.User, error) {
 
 // UpdateUser updates user entry in database
 func (m *MySQL) UpdateUser(s model.User) (model.User, error) {
-	_, err := m.conn.Exec(
+	tx := m.conn.MustBegin()
+	tx.MustExec(
 		"UPDATE `users` SET `name` = ?, `utype` = ?, `balance` = ? WHERE `id` = ?",
 		s.Name, s.UserType, s.Balance, s.ID,
 	)
+	err := tx.Commit()
+
 	if err != nil {
 		return s, err
 	}
@@ -182,16 +185,18 @@ func (m *MySQL) ListBillings() ([]model.Billing, error) {
 
 // UpdateBilling updates billing entry in database
 func (m *MySQL) UpdateBilling(s model.Billing) (model.Billing, error) {
-	_, err := m.conn.Exec(
-		"UPDATE `billings` SET sender=?, reciever=?, amount=?, time_bill=?, task_id=?, btype=? WHERE id=?",
+	tx := m.conn.MustBegin()
+	tx.MustExec(
+		"UPDATE `billings` SET `sender` = ?, `reciever` = ?, `amount` = ?, `time_bill` = ?, `task_id` = ?, `btype` = ? WHERE `id` = ?",
 		s.Sender, s.Reciever, s.Amount, s.TimeBill, s.TaskID, s.BillingType, s.ID,
 	)
+	err := tx.Commit()
 	if err != nil {
-		return s, err
+		return s, errors.Wrap(err, "not updating")
 	}
 	var i model.Billing
 	err = m.conn.Get(&i, "SELECT * FROM `billings` WHERE id=?", s.ID)
-	return i, err
+	return i, errors.Wrapf(err, "Not selected %d -- %s", s.ID, s.BillingType)
 }
 
 // DeleteBilling deletes billing entry from database

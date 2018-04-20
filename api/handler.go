@@ -125,22 +125,54 @@ func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
 
 // SelectTask responce selected Task
 func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
+	var uid int64
+	uid = in.Id
 
-	return nil, nil
+	u, err := s.db.SelectTask(uid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Task{Id: u.ID, Description: u.Description, Price: u.Price, Status: u.Status}, nil
 }
 
 // ListTasks responce list of Tasks
-func (s *Server) ListTasks(ctx context.Context, in *Task) (*Task, error) {
+func (s *Server) ListTasks(in *Task, stream DoTasks_ListTasksServer) error {
+	u, _ := s.db.ListTasks()
 
-	return nil, nil
-	//return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	for _, k := range u {
+		if err := stream.Send(&Task{Id: k.ID, Description: k.Description, Price: k.Price, Status: k.Status}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // UpdateTask responce updating of Task
 func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
+	var u model.Task
+	u.ID = in.Id
+	u.Description = in.Description
+	u.Price = int32(in.Price)
+	u.Status = in.Status
 
-	return nil, nil
-	//return &Task{Id: uid, Name: name, Utype: utype, Balance: balance}, nil
+	upd, err := s.db.UpdateTask(u)
+	if err != nil {
+		fmt.Println("ErrMySQL:", u.Description, u.Price, u.Status, u.ID, err)
+		return nil, err
+	}
+
+	return &Task{Id: upd.ID, Description: upd.Description, Price: upd.Price, Status: upd.Status}, nil
+}
+
+// DeleteTask ...
+func (s *Server) DeleteTask(ctx context.Context, in *TaskId) (*Task, error) {
+	uid := in.Id
+	err := s.db.DeleteTask(uid)
+	if err != nil {
+		return nil, err
+	}
+	return &Task{Id: uid}, nil
 }
 
 // CreateBilling generates responce id from DB

@@ -22,8 +22,10 @@ message ManyUsers {
 message Task {
     int64 id = 1;
     string description = 2;
-    int32 price = 3;
-    string status = 4;
+    int64 creator = 3;
+    int64 executor = 4;
+    int32 price = 5;
+    string status = 6;
 }
 
 message TaskId {

@@ -47,7 +47,6 @@ func (s *Server) CreateUser(ctx context.Context, in *User) (*UserId, error) {
 	u.Name = in.Name
 	u.UserType = in.Utype
 	u.Balance = int32(in.Balance)
-
 	uid, err := s.db.CreateUser(u)
 	if err != nil {
 		return nil, err
@@ -117,6 +116,8 @@ func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
 	u.Description = in.Description
 	u.Price = int32(in.Price)
 	u.Status = in.Status
+	u.Creator = in.Creator
+	u.Executor = in.Executor
 
 	uid, err := s.db.CreateTask(u)
 	if err != nil {
@@ -136,7 +137,7 @@ func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
 		return nil, err
 	}
 
-	return &Task{Id: u.ID, Description: u.Description, Price: u.Price, Status: u.Status}, nil
+	return &Task{Id: u.ID, Description: u.Description, Creator: u.Creator, Executor: u.Executor, Price: u.Price, Status: u.Status}, nil
 }
 
 // ListTasks responce list of Tasks
@@ -146,7 +147,7 @@ func (s *Server) ListTasks(ctx context.Context, in *Task) (*ManyTasks, error) {
 	mt := &ManyTasks{}
 	var ms []*Task
 	for _, k := range u {
-		kl := &Task{Id: k.ID, Description: k.Description, Price: k.Price, Status: k.Status}
+		kl := &Task{Id: k.ID, Description: k.Description, Creator: k.Creator, Executor: k.Executor, Price: k.Price, Status: k.Status}
 		ms = append(ms, kl)
 	}
 
@@ -165,11 +166,10 @@ func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
 
 	upd, err := s.db.UpdateTask(u)
 	if err != nil {
-		fmt.Println("ErrMySQL:", u.Description, u.Price, u.Status, u.ID, err)
 		return nil, err
 	}
 
-	return &Task{Id: upd.ID, Description: upd.Description, Price: upd.Price, Status: upd.Status}, nil
+	return &Task{Id: upd.ID, Description: upd.Description, Creator: upd.Creator, Executor: upd.Executor, Price: upd.Price, Status: upd.Status}, nil
 }
 
 // DeleteTask ...

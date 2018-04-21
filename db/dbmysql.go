@@ -104,8 +104,8 @@ func (m *MySQL) DeleteUser(id int64) error {
 // CreateTask creates task entry in database
 func (m *MySQL) CreateTask(s model.Task) (model.Task, error) {
 	res, err := m.conn.Exec(
-		"INSERT INTO `tasks` (description, price, status) VALUES (?, ?, ?)",
-		s.Description, s.Price, s.Status,
+		"INSERT INTO `tasks` (description, creator, executor, price, status) VALUES (?, ?, ?, ?, ?)",
+		s.Description, s.Creator, s.Executor, s.Price, s.Status,
 	)
 	if err != nil {
 		return s, err
@@ -135,8 +135,8 @@ func (m *MySQL) ListTasks() ([]model.Task, error) {
 // UpdateTask updates task entry in database
 func (m *MySQL) UpdateTask(s model.Task) (model.Task, error) {
 	_, err := m.conn.Exec(
-		"UPDATE `tasks` SET description=?, price=?, status=? WHERE id=?",
-		s.Description, s.Price, s.Status, s.ID,
+		"UPDATE `tasks` SET description=?, creator=?, executor=?, price=?, status=? WHERE id=?",
+		s.Description, s.Creator, s.Executor, s.Price, s.Status, s.ID,
 	)
 	if err != nil {
 		return s, err

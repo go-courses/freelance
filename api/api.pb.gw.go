@@ -74,7 +74,7 @@ var (
 	filter_DoUsers_ListUsers_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_DoUsers_ListUsers_0(ctx context.Context, marshaler runtime.Marshaler, client DoUsersClient, req *http.Request, pathParams map[string]string) (DoUsers_ListUsersClient, runtime.ServerMetadata, error) {
+func request_DoUsers_ListUsers_0(ctx context.Context, marshaler runtime.Marshaler, client DoUsersClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq User
 	var metadata runtime.ServerMetadata
 
@@ -82,16 +82,8 @@ func request_DoUsers_ListUsers_0(ctx context.Context, marshaler runtime.Marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.ListUsers(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.ListUsers(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
@@ -201,7 +193,7 @@ var (
 	filter_DoTasks_ListTasks_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_DoTasks_ListTasks_0(ctx context.Context, marshaler runtime.Marshaler, client DoTasksClient, req *http.Request, pathParams map[string]string) (DoTasks_ListTasksClient, runtime.ServerMetadata, error) {
+func request_DoTasks_ListTasks_0(ctx context.Context, marshaler runtime.Marshaler, client DoTasksClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq Task
 	var metadata runtime.ServerMetadata
 
@@ -209,16 +201,8 @@ func request_DoTasks_ListTasks_0(ctx context.Context, marshaler runtime.Marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.ListTasks(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.ListTasks(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
@@ -328,7 +312,7 @@ var (
 	filter_DoBillings_ListBillings_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_DoBillings_ListBillings_0(ctx context.Context, marshaler runtime.Marshaler, client DoBillingsClient, req *http.Request, pathParams map[string]string) (DoBillings_ListBillingsClient, runtime.ServerMetadata, error) {
+func request_DoBillings_ListBillings_0(ctx context.Context, marshaler runtime.Marshaler, client DoBillingsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq Billing
 	var metadata runtime.ServerMetadata
 
@@ -336,16 +320,8 @@ func request_DoBillings_ListBillings_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.ListBillings(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.ListBillings(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
@@ -530,7 +506,7 @@ func RegisterDoUsersHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 			return
 		}
 
-		forward_DoUsers_ListUsers_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_DoUsers_ListUsers_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -612,7 +588,7 @@ var (
 
 	forward_DoUsers_SelectUser_0 = runtime.ForwardResponseMessage
 
-	forward_DoUsers_ListUsers_0 = runtime.ForwardResponseStream
+	forward_DoUsers_ListUsers_0 = runtime.ForwardResponseMessage
 
 	forward_DoUsers_UpdateUser_0 = runtime.ForwardResponseMessage
 
@@ -740,7 +716,7 @@ func RegisterDoTasksHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 			return
 		}
 
-		forward_DoTasks_ListTasks_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_DoTasks_ListTasks_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -822,7 +798,7 @@ var (
 
 	forward_DoTasks_SelectTask_0 = runtime.ForwardResponseMessage
 
-	forward_DoTasks_ListTasks_0 = runtime.ForwardResponseStream
+	forward_DoTasks_ListTasks_0 = runtime.ForwardResponseMessage
 
 	forward_DoTasks_UpdateTask_0 = runtime.ForwardResponseMessage
 
@@ -950,7 +926,7 @@ func RegisterDoBillingsHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 			return
 		}
 
-		forward_DoBillings_ListBillings_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_DoBillings_ListBillings_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1032,7 +1008,7 @@ var (
 
 	forward_DoBillings_SelectBilling_0 = runtime.ForwardResponseMessage
 
-	forward_DoBillings_ListBillings_0 = runtime.ForwardResponseStream
+	forward_DoBillings_ListBillings_0 = runtime.ForwardResponseMessage
 
 	forward_DoBillings_UpdateBilling_0 = runtime.ForwardResponseMessage
 

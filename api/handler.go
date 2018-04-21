@@ -70,15 +70,18 @@ func (s *Server) SelectUser(ctx context.Context, in *UserId) (*User, error) {
 }
 
 // ListUsers responce list of Users
-func (s *Server) ListUsers(in *User, stream DoUsers_ListUsersServer) error {
+func (s *Server) ListUsers(ctx context.Context, in *User) (*ManyUsers, error) {
 	u, _ := s.db.ListUsers()
-
+	mu := &ManyUsers{}
+	var ms []*User
 	for _, k := range u {
-		if err := stream.Send(&User{Id: k.ID, Name: k.Name, Utype: k.UserType, Balance: k.Balance}); err != nil {
-			return err
-		}
+		kl := &User{Id: k.ID, Name: k.Name, Utype: k.UserType, Balance: k.Balance}
+		ms = append(ms, kl)
 	}
-	return nil
+
+	mu.Users = ms
+
+	return mu, nil
 }
 
 // UpdateUser responce updating of User
@@ -110,7 +113,6 @@ func (s *Server) DeleteUser(ctx context.Context, in *UserId) (*User, error) {
 
 // CreateTask generates responce id from DB
 func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
-	fmt.Println("test ok")
 	var u model.Task
 	u.Description = in.Description
 	u.Price = int32(in.Price)
@@ -138,15 +140,19 @@ func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
 }
 
 // ListTasks responce list of Tasks
-func (s *Server) ListTasks(in *Task, stream DoTasks_ListTasksServer) error {
+func (s *Server) ListTasks(ctx context.Context, in *Task) (*ManyTasks, error) {
 	u, _ := s.db.ListTasks()
 
+	mt := &ManyTasks{}
+	var ms []*Task
 	for _, k := range u {
-		if err := stream.Send(&Task{Id: k.ID, Description: k.Description, Price: k.Price, Status: k.Status}); err != nil {
-			return err
-		}
+		kl := &Task{Id: k.ID, Description: k.Description, Price: k.Price, Status: k.Status}
+		ms = append(ms, kl)
 	}
-	return nil
+
+	mt.Tasks = ms
+
+	return mt, nil
 }
 
 // UpdateTask responce updating of Task
@@ -209,16 +215,20 @@ func (s *Server) SelectBilling(ctx context.Context, in *BillingId) (*Billing, er
 }
 
 // ListBillings responce list of Billings
-func (s *Server) ListBillings(in *Billing, stream DoBillings_ListBillingsServer) error {
+func (s *Server) ListBillings(ctx context.Context, in *Billing) (*ManyBillings, error) {
 	u, _ := s.db.ListBillings()
 
+	mb := &ManyBillings{}
+	var ms []*Billing
 	for _, b := range u {
 		btime, _ := ptypes.TimestampProto(b.TimeBill)
-		if err := stream.Send(&Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}); err != nil {
-			return err
-		}
+		kl := &Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}
+		ms = append(ms, kl)
 	}
-	return nil
+
+	mb.Billings = ms
+
+	return mb, nil
 }
 
 // UpdateBilling responce updating of Billing

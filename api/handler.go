@@ -110,6 +110,7 @@ func (s *Server) DeleteUser(ctx context.Context, in *UserId) (*User, error) {
 
 // CreateTask generates responce id from DB
 func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
+	fmt.Println("test ok")
 	var u model.Task
 	u.Description = in.Description
 	u.Price = int32(in.Price)

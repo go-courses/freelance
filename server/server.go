@@ -52,6 +52,10 @@ func StartRESTServer(address, grpcAddress string) error {
 	if err != nil {
 		return fmt.Errorf("could not register service DoUsers: %s", err)
 	}
+	err = api.RegisterDoTasksHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
+	if err != nil {
+		return fmt.Errorf("could not register service DoTasks: %s", err)
+	}
 	err = api.RegisterDoBillingsHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
 	if err != nil {
 		return fmt.Errorf("could not register service DoBillings: %s", err)

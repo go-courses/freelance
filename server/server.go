@@ -28,6 +28,7 @@ func StartGRPCServer(address string, s *api.Server) error {
 	// attach the DoUser service to the server
 	api.RegisterDoUsersServer(grpcServer, s)
 	api.RegisterDoBillingsServer(grpcServer, s)
+	api.RegisterDoTasksServer(grpcServer, s)
 	// start the server
 	log.Printf("starting HTTP/2 gRPC server on %s", address)
 	if err := grpcServer.Serve(lis); err != nil {

@@ -15,15 +15,25 @@ message UserId {
     int64 id = 1;
 }
 
+message ManyUsers {
+    repeated User users = 1;
+}
+
 message Task {
     int64 id = 1;
     string description = 2;
-    int32 price = 3;
-    string status = 4;
+    int64 creator = 3;
+    int64 executor = 4;
+    int32 price = 5;
+    string status = 6;
 }
 
 message TaskId {
     int64 id = 1;
+}
+
+message ManyTasks {
+    repeated Task tasks = 1;
 }
 
 message Billing {
@@ -40,6 +50,10 @@ message BillingId {
     int64 id = 1;
 }
 
+message ManyBillings {
+    repeated Billing billings = 1;
+}
+
 service DoUsers {
     rpc CreateUser(User) returns (UserId) {
         option (google.api.http) = {
@@ -52,7 +66,7 @@ service DoUsers {
             get: "/api/user/{id}"
         };
     }
-    rpc ListUsers(User) returns (stream User) {
+    rpc ListUsers(User) returns (ManyUsers) {
         option (google.api.http) = {
             get: "/api/users"
         };
@@ -82,7 +96,7 @@ service DoTasks {
             get: "/api/task/{id}"
         };
     }
-    rpc ListTasks(Task) returns (stream Task) {
+    rpc ListTasks(Task) returns (ManyTasks) {
         option (google.api.http) = {
             get: "/api/tasks"
         };
@@ -112,7 +126,7 @@ service DoBillings {
             get: "/api/billing/{id}"
         };
     }
-    rpc ListBillings(Billing) returns (stream Billing) {
+    rpc ListBillings(Billing) returns (ManyBillings) {
         option (google.api.http) = {
             get: "/api/billings"
         };

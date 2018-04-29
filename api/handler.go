@@ -46,7 +46,7 @@ func (s *Server) CreateUser(ctx context.Context, in *User) (*UserId, error) {
 	var u model.User
 	u.Name = in.Name
 	u.UserType = in.Utype
-	u.Balance = int32(in.Balance)
+	u.Balance = model.Money(in.Balance)
 	uid, err := s.db.CreateUser(u)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (s *Server) SelectUser(ctx context.Context, in *UserId) (*User, error) {
 		return nil, err
 	}
 
-	return &User{Id: u.ID, Name: u.Name, Utype: u.UserType, Balance: u.Balance}, nil
+	return &User{Id: u.ID, Name: u.Name, Utype: u.UserType, Balance: int32(u.Balance)}, nil
 }
 
 // ListUsers responce list of Users
@@ -74,7 +74,7 @@ func (s *Server) ListUsers(ctx context.Context, in *User) (*ManyUsers, error) {
 	mu := &ManyUsers{}
 	var ms []*User
 	for _, k := range u {
-		kl := &User{Id: k.ID, Name: k.Name, Utype: k.UserType, Balance: k.Balance}
+		kl := &User{Id: k.ID, Name: k.Name, Utype: k.UserType, Balance: int32(k.Balance)}
 		ms = append(ms, kl)
 	}
 
@@ -89,7 +89,7 @@ func (s *Server) UpdateUser(ctx context.Context, in *User) (*User, error) {
 	u.ID = in.Id
 	u.Name = in.Name
 	u.UserType = in.Utype
-	u.Balance = int32(in.Balance)
+	u.Balance = model.Money(in.Balance)
 
 	upd, err := s.db.UpdateUser(u)
 	if err != nil {
@@ -97,7 +97,7 @@ func (s *Server) UpdateUser(ctx context.Context, in *User) (*User, error) {
 		return nil, err
 	}
 
-	return &User{Id: upd.ID, Name: upd.Name, Utype: upd.UserType, Balance: upd.Balance}, nil
+	return &User{Id: upd.ID, Name: upd.Name, Utype: upd.UserType, Balance: int32(upd.Balance)}, nil
 }
 
 // DeleteUser ...
@@ -114,7 +114,7 @@ func (s *Server) DeleteUser(ctx context.Context, in *UserId) (*User, error) {
 func (s *Server) CreateTask(ctx context.Context, in *Task) (*TaskId, error) {
 	var u model.Task
 	u.Description = in.Description
-	u.Price = int32(in.Price)
+	u.Price = model.Money(in.Price)
 	u.Status = in.Status
 	u.Creator = in.Creator
 	u.Executor = in.Executor
@@ -137,7 +137,7 @@ func (s *Server) SelectTask(ctx context.Context, in *TaskId) (*Task, error) {
 		return nil, err
 	}
 
-	return &Task{Id: u.ID, Description: u.Description, Creator: u.Creator, Executor: u.Executor, Price: u.Price, Status: u.Status}, nil
+	return &Task{Id: u.ID, Description: u.Description, Creator: u.Creator, Executor: u.Executor, Price: int32(u.Price), Status: u.Status}, nil
 }
 
 // ListTasks responce list of Tasks
@@ -147,7 +147,7 @@ func (s *Server) ListTasks(ctx context.Context, in *Task) (*ManyTasks, error) {
 	mt := &ManyTasks{}
 	var ms []*Task
 	for _, k := range u {
-		kl := &Task{Id: k.ID, Description: k.Description, Creator: k.Creator, Executor: k.Executor, Price: k.Price, Status: k.Status}
+		kl := &Task{Id: k.ID, Description: k.Description, Creator: k.Creator, Executor: k.Executor, Price: int32(k.Price), Status: k.Status}
 		ms = append(ms, kl)
 	}
 
@@ -161,7 +161,7 @@ func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
 	var u model.Task
 	u.ID = in.Id
 	u.Description = in.Description
-	u.Price = int32(in.Price)
+	u.Price = model.Money(in.Price)
 	u.Status = in.Status
 
 	upd, err := s.db.UpdateTask(u)
@@ -169,7 +169,7 @@ func (s *Server) UpdateTask(ctx context.Context, in *Task) (*Task, error) {
 		return nil, err
 	}
 
-	return &Task{Id: upd.ID, Description: upd.Description, Creator: upd.Creator, Executor: upd.Executor, Price: upd.Price, Status: upd.Status}, nil
+	return &Task{Id: upd.ID, Description: upd.Description, Creator: upd.Creator, Executor: upd.Executor, Price: int32(upd.Price), Status: upd.Status}, nil
 }
 
 // DeleteTask ...
@@ -187,7 +187,7 @@ func (s *Server) CreateBilling(ctx context.Context, in *Billing) (*BillingId, er
 	var b model.Billing
 	b.Sender = in.Sender
 	b.Reciever = in.Reciever
-	b.Amount = int32(in.Amount)
+	b.Amount = model.Money(in.Amount)
 	b.BillingType = in.Btype
 	b.TaskID = in.TaskId
 	b.TimeBill = time.Now()
@@ -211,7 +211,7 @@ func (s *Server) SelectBilling(ctx context.Context, in *BillingId) (*Billing, er
 	}
 
 	btime, _ := ptypes.TimestampProto(b.TimeBill)
-	return &Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}, nil
+	return &Billing{b.ID, b.Sender, b.Reciever, int32(b.Amount), btime, b.TaskID, b.BillingType}, nil
 }
 
 // ListBillings responce list of Billings
@@ -222,7 +222,7 @@ func (s *Server) ListBillings(ctx context.Context, in *Billing) (*ManyBillings, 
 	var ms []*Billing
 	for _, b := range u {
 		btime, _ := ptypes.TimestampProto(b.TimeBill)
-		kl := &Billing{b.ID, b.Sender, b.Reciever, b.Amount, btime, b.TaskID, b.BillingType}
+		kl := &Billing{b.ID, b.Sender, b.Reciever, int32(b.Amount), btime, b.TaskID, b.BillingType}
 		ms = append(ms, kl)
 	}
 
@@ -237,7 +237,7 @@ func (s *Server) UpdateBilling(ctx context.Context, in *Billing) (*Billing, erro
 	b.ID = in.Id
 	b.Sender = in.Sender
 	b.Reciever = in.Reciever
-	b.Amount = int32(in.Amount)
+	b.Amount = model.Money(in.Amount)
 	b.BillingType = in.Btype
 	b.TaskID = in.TaskId
 	b.TimeBill = time.Now()
@@ -251,7 +251,7 @@ func (s *Server) UpdateBilling(ctx context.Context, in *Billing) (*Billing, erro
 	if err != nil {
 		fmt.Println("Error of Time", err)
 	}
-	return &Billing{k.ID, k.Sender, k.Reciever, k.Amount, ktime, k.TaskID, k.BillingType}, nil
+	return &Billing{k.ID, k.Sender, k.Reciever, int32(k.Amount), ktime, k.TaskID, k.BillingType}, nil
 }
 
 // DeleteBilling ...

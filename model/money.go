@@ -1,10 +1,10 @@
 package model
 
-import(
+import (
 	"encoding/json"
 )
 
-type Money int64
+type Money int32
 
 func (m *Money) UnmarshalJSON(b []byte) error {
 	var v float64

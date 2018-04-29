@@ -6,6 +6,6 @@ type Task struct {
 	Description string `db:"description"`
 	Creator     int64  `db:"creator"`
 	Executor    int64  `db:"executor"`
-	Price       int32  `db:"price"`
+	Price       *Money  `db:"price"`
 	Status      string `db:"status"`
 }

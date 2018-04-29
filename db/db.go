@@ -22,6 +22,6 @@ type DB interface {
 	UpdateBilling(s model.Billing) (model.Billing, error)
 	DeleteBilling(id int64) error
 
-	MigrateUp() error
-	MigrateDown() error
+	MigrateUp(string) error
+	MigrateDown(string) error
 }

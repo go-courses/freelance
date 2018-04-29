@@ -206,10 +206,10 @@ func (m *MySQL) DeleteBilling(id int64) error {
 }
 
 // MigrateUp - create tables
-func (m *MySQL) MigrateUp() error {
+func (m *MySQL) MigrateUp(migrateFolder string) error {
 	driver, _ := mysql.WithInstance(m.connmigrate, &mysql.Config{})
 	migration, err := migrate.NewWithDatabaseInstance(
-		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/mysql",
+		migrateFolder,
 		"mysql",
 		driver,
 	)
@@ -226,10 +226,10 @@ func (m *MySQL) MigrateUp() error {
 }
 
 // MigrateDown - delete tables
-func (m *MySQL) MigrateDown() error {
+func (m *MySQL) MigrateDown(migrateFolder string) error {
 	driver, _ := mysql.WithInstance(m.connmigrate, &mysql.Config{})
 	migration, err := migrate.NewWithDatabaseInstance(
-		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/mysql",
+		migrateFolder,
 		"mysql",
 		driver,
 	)

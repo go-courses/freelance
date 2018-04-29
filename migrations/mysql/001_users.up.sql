@@ -1,10 +1,7 @@
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) NOT NULL,
   `utype` enum('client','executor') NOT NULL,
-  `balance` int(11) NOT NULL
+  `balance` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE `users` ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `users` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

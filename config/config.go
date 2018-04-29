@@ -4,9 +4,10 @@ import "github.com/kelseyhightower/envconfig"
 
 // FreelanceConfig ...
 type FreelanceConfig struct {
-	DatabaseURL string `envconfig:"DATABASE_URL"`
-	DbType      string `envconfig:"DB_TYPE"`
-	DoMigration string `envconfig:"DO_MIGRATION"`
+	DatabaseURL      string `envconfig:"DATABASE_URL"`
+	DbType           string `envconfig:"DB_TYPE"`
+	DoMigration      string `envconfig:"DO_MIGRATION"`
+	MigrationsFolder string `envconfig:"MIGRATIONS_FOLDER"`
 }
 
 // GetConfig ...

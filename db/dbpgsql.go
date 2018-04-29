@@ -212,10 +212,10 @@ func (m *PgSQL) DeleteBilling(id int64) error {
 }
 
 // MigrateUp - create tables
-func (m *PgSQL) MigrateUp() error {
+func (m *PgSQL) MigrateUp(migrateFolder string) error {
 	driver, _ := postgres.WithInstance(m.connmigrate, &postgres.Config{})
 	migration, err := migrate.NewWithDatabaseInstance(
-		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/pgsql",
+		migrateFolder,
 		"postgres",
 		driver,
 	)
@@ -232,10 +232,10 @@ func (m *PgSQL) MigrateUp() error {
 }
 
 // MigrateDown - delete tables
-func (m *PgSQL) MigrateDown() error {
+func (m *PgSQL) MigrateDown(migrateFolder string) error {
 	driver, _ := postgres.WithInstance(m.connmigrate, &postgres.Config{})
 	migration, err := migrate.NewWithDatabaseInstance(
-		"file://"+getPath()+"/src/github.com/go-courses/freelance/migrations/pgsql",
+		migrateFolder,
 		"postgres",
 		driver,
 	)

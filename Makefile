@@ -1,11 +1,20 @@
-SHELL := /bin/bash
+*** missing separator.  Stop.SHELL := /bin/bash
 API_OUT := "api/api.pb.go"
 API_REST_OUT := "api/api.pb.gw.go"
 GOPATH=$(shell go env GOPATH)
 
 .PHONY: all api server
 
-api/api.pb.go: 
+build_linux:
+	GOOS=linux GOARCH=amd64 go build -o freelance cmd/freelance/main.go
+
+build_docker:
+	docker build -t freelance .
+
+
+docker: build_linux build_docker
+
+api/api.pb.go:
 	protoc -I/usr/local/include -I api/ \
     -I${GOPATH}/src \
     -I${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \

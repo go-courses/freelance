@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  freelance-db:
+    image: percona/percona-server:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=freelance
+    networks: 
+      - freelance
+  
+  freelance:
+    build: .
+    environment:
+      - DO_MIGRATION=Yes
+      - DB_TYPE=mysql
+      - DATABASE_URL=root:root@(freelance-db:3306)/freelance?parseTime=true
+      - MIGRATIONS_FOLDER=file:///migrations/mysql
+
+    networks: 
+      - freelance
+    ports:
+      - 7777:7777
+      - 7778:7778
+
+networks: 
+  freelance:

@@ -27,13 +27,19 @@ func main() {
 			if err != nil {
 				log.Fatalf("failed connect to Mysql: %s", err)
 			}
-			err = conn.MigrateUp()
+			err = conn.MigrateUp(c.MigrationsFolder)
+			if err != nil {
+				log.Fatal(err)
+			}
 		case "postgres":
 			conn, err := db.NewPgSQL(c)
 			if err != nil {
 				log.Fatalf("failed connect to PostgreSQL: %s", err)
 			}
-			err = conn.MigrateUp()
+			err = conn.MigrateUp(c.MigrationsFolder)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 

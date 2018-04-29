@@ -3,5 +3,4 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `utype` enum('client','executor') NOT NULL,
   `balance` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
